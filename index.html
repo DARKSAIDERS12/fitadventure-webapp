@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База продуктов FitAdventure</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 16px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--tg-theme-hint-color, #999999);
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #2481cc);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .category-btn {
+            padding: 16px 12px;
+            border: none;
+            border-radius: 12px;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover {
+            opacity: 0.8;
+        }
+
+        .products-container {
+            display: none;
+        }
+
+        .product-card {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .product-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .info-item {
+            background: var(--tg-theme-bg-color, #ffffff);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-label {
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--tg-theme-button-color, #2481cc);
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .goal-selector {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .goal-btn {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 2px solid var(--tg-theme-button-color, #2481cc);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--tg-theme-text-color, #000000);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .goal-btn.active {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🍎 База продуктов</h1>
+        <p>Калорийность и БЖУ на 100г</p>
+    </div>
+
+    <div class="goal-selector">
+        <button class="goal-btn active" data-goal="похудение">Похудение</button>
+        <button class="goal-btn" data-goal="набор_массы">Набор массы</button>
+        <button class="goal-btn" data-goal="поддержание">Поддержание</button>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="🔍 Поиск продукта..." id="searchInput">
+    </div>
+
+    <div class="categories" id="categories">
+        <button class="category-btn" data-category="сложные_углеводы">🌾 Сложные углеводы</button>
+        <button class="category-btn" data-category="простые_углеводы">⚡ Простые углеводы</button>
+        <button class="category-btn" data-category="белки">🥩 Белки</button>
+        <button class="category-btn" data-category="ненасыщенные_жиры">🫒 Ненасыщенные жиры</button>
+        <button class="category-btn" data-category="насыщенные_жиры">🧈 Насыщенные жиры</button>
+        <button class="category-btn" data-category="клетчатка">🌿 Клетчатка</button>
+    </div>
+
+    <div class="products-container" id="productsContainer">
+        <div class="loading">Загрузка продуктов...</div>
+    </div>
+
+    <button class="back-btn" id="backBtn">🔙 Назад к категориям</button>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // База данных продуктов
+        const productsDatabase = {
+            "похудение": {
+                "сложные_углеводы": {
+                    "овсянка": {"калории": 389, "белки": 16.9, "жиры": 6.9, "углеводы": 66, "клетчатка": 10.6, "описание": "Медленные углеводы, надолго насыщают"},
+                    "гречка": {"калории": 343, "белки": 13, "жиры": 3.4, "углеводы": 72, "клетчатка": 10, "описание": "Богата железом, идеальна для похудения"},
+                    "киноа": {"калории": 120, "белки": 4.4, "жиры": 1.9, "углеводы": 22, "клетчатка": 2.8, "описание": "Полноценный белок, низкая калорийность"}
+                },
+                "простые_углеводы": {
+                    "мед": {"калории": 304, "белки": 0.3, "жиры": 0, "углеводы": 82, "клетчатка": 0.2, "описание": "Натуральный подсластитель"},
+                    "банан": {"калории": 89, "белки": 1.1, "жиры": 0.3, "углеводы": 23, "клетчатка": 2.6, "описание": "Быстрая энергия, богат калием"}
+                },
+                "белки": {
+                    "куриная_грудка": {"калории": 165, "белки": 31, "жиры": 3.6, "углеводы": 0, "клетчатка": 0, "описание": "Постный белок, идеален для похудения"},
+                    "яйца": {"калории": 155, "белки": 13, "жиры": 11, "углеводы": 1.1, "клетчатка": 0, "описание": "Полноценный белок, витамины"},
+                    "творог": {"калории": 98, "белки": 11, "жиры": 4.3, "углеводы": 3.4, "клетчатка": 0, "описание": "Казеин, медленное усвоение"}
+                },
+                "ненасыщенные_жиры": {
+                    "авокадо": {"калории": 160, "белки": 2, "жиры": 15, "углеводы": 9, "клетчатка": 7, "описание": "Полезные жиры, много клетчатки"},
+                    "орехи_грецкие": {"калории": 654, "белки": 15, "жиры": 65, "углеводы": 14, "клетчатка": 7, "описание": "Омега-3, белок"}
+                },
+                "насыщенные_жиры": {
+                    "сыр": {"калории": 402, "белки": 25, "жиры": 33, "углеводы": 1.3, "клетчатка": 0, "описание": "Кальций, белок"}
+                },
+                "клетчатка": {
+                    "брокколи": {"калории": 34, "белки": 2.8, "жиры": 0.4, "углеводы": 7, "клетчатка": 2.6, "описание": "Витамин C, антиоксиданты"},
+                    "шпинат": {"калории": 23, "белки": 2.9, "жиры": 0.4, "углеводы": 3.6, "клетчатка": 2.2, "описание": "Железо, витамины"}
+                }
+            },
+            "набор_массы": {
+                "сложные_углеводы": {
+                    "рис_белый": {"калории": 130, "белки": 2.7, "жиры": 0.3, "углеводы": 28, "клетчатка": 0.4, "описание": "Быстрые углеводы для массы"},
+                    "макароны": {"калории": 131, "белки": 5, "жиры": 1.1, "углеводы": 25, "клетчатка": 1.8, "описание": "Энергия для тренировок"}
+                },
+                "белки": {
+                    "говядина": {"калории": 250, "белки": 26, "жиры": 15, "углеводы": 0, "клетчатка": 0, "описание": "Креатин, железо"},
+                    "лосось": {"калории": 208, "белки": 25, "жиры": 12, "углеводы": 0, "клетчатка": 0, "описание": "Омега-3, белок"}
+                },
+                "ненасыщенные_жиры": {
+                    "миндаль": {"калории": 579, "белки": 21, "жиры": 50, "углеводы": 22, "клетчатка": 12, "описание": "Белок, витамин E"}
+                }
+            },
+            "поддержание": {
+                "сложные_углеводы": {
+                    "овсянка": {"калории": 389, "белки": 16.9, "жиры": 6.9, "углеводы": 66, "клетчатка": 10.6, "описание": "Сбалансированный завтрак"},
+                    "гречка": {"калории": 343, "белки": 13, "жиры": 3.4, "углеводы": 72, "клетчатка": 10, "описание": "Питательная крупа"}
+                },
+                "белки": {
+                    "куриная_грудка": {"калории": 165, "белки": 31, "жиры": 3.6, "углеводы": 0, "клетчатка": 0, "описание": "Постный белок"},
+                    "яйца": {"калории": 155, "белки": 13, "жиры": 11, "углеводы": 1.1, "клетчатка": 0, "описание": "Полноценный белок"}
+                },
+                "ненасыщенные_жиры": {
+                    "авокадо": {"калории": 160, "белки": 2, "жиры": 15, "углеводы": 9, "клетчатка": 7, "описание": "Полезные жиры"}
+                }
+            }
+        };
+
+        let currentGoal = 'похудение';
+        let currentCategory = null;
+
+        // Элементы DOM
+        const categoriesEl = document.getElementById('categories');
+        const productsContainerEl = document.getElementById('productsContainer');
+        const backBtnEl = document.getElementById('backBtn');
+        const searchInputEl = document.getElementById('searchInput');
+        const goalBtns = document.querySelectorAll('.goal-btn');
+
+        // Обработчики событий
+        goalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                goalBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentGoal = btn.dataset.goal;
+                showCategories();
+            });
+        });
+
+        categoriesEl.addEventListener('click', (e) => {
+            if (e.target.classList.contains('category-btn')) {
+                const category = e.target.dataset.category;
+                showProducts(category);
+            }
+        });
+
+        backBtnEl.addEventListener('click', showCategories);
+
+        searchInputEl.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 2) {
+                searchProducts(query);
+            } else if (currentCategory) {
+                showProducts(currentCategory);
+            } else {
+                showCategories();
+            }
+        });
+
+        // Функции
+        function showCategories() {
+            currentCategory = null;
+            categoriesEl.style.display = 'grid';
+            productsContainerEl.style.display = 'none';
+            backBtnEl.style.display = 'none';
+            searchInputEl.value = '';
+        }
+
+        function showProducts(category) {
+            currentCategory = category;
+            categoriesEl.style.display = 'none';
+            productsContainerEl.style.display = 'block';
+            backBtnEl.style.display = 'block';
+
+            const products = productsDatabase[currentGoal][category];
+            if (!products) {
+                productsContainerEl.innerHTML = '<div class="error">Продукты не найдены</div>';
+                return;
+            }
+
+            let html = '';
+            Object.entries(products).forEach(([name, data]) => {
+                html += `
+                    <div class="product-card" onclick="showProductDetails('${name}', '${category}')">
+                        <div class="product-name">${name.replace('_', ' ').toUpperCase()}</div>
+                        <div class="product-info">
+                            <div class="info-item">
+                                <div class="info-label">Калории</div>
+                                <div class="info-value">${data.калории}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Белки</div>
+                                <div class="info-value">${data.белки}g</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Жиры</div>
+                                <div class="info-value">${data.жиры}g</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Углеводы</div>
+                                <div class="info-value">${data.углеводы}g</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            productsContainerEl.innerHTML = html;
+        }
+
+        function searchProducts(query) {
+            categoriesEl.style.display = 'none';
+            productsContainerEl.style.display = 'block';
+            backBtnEl.style.display = 'block';
+
+            let results = [];
+            Object.entries(productsDatabase[currentGoal]).forEach(([category, products]) => {
+                Object.entries(products).forEach(([name, data]) => {
+                    if (name.toLowerCase().includes(query)) {
+                        results.push({ name, data, category });
+                    }
+                });
+            });
+
+            if (results.length === 0) {
+                productsContainerEl.innerHTML = '<div class="error">Продукты не найдены</div>';
+                return;
+            }
+
+            let html = '';
+            results.forEach(({ name, data, category }) => {
+                html += `
+                    <div class="product-card" onclick="showProductDetails('${name}', '${category}')">
+                        <div class="product-name">${name.replace('_', ' ').toUpperCase()}</div>
+                        <div class="product-info">
+                            <div class="info-item">
+                                <div class="info-label">Калории</div>
+                                <div class="info-value">${data.калории}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Белки</div>
+                                <div class="info-value">${data.белки}g</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Жиры</div>
+                                <div class="info-value">${data.жиры}g</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Углеводы</div>
+                                <div class="info-value">${data.углеводы}g</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            productsContainerEl.innerHTML = html;
+        }
+
+        function showProductDetails(name, category) {
+            const product = productsDatabase[currentGoal][category][name];
+            if (!product) return;
+
+            const details = `
+                🍎 ${name.replace('_', ' ').toUpperCase()}
+                
+                📊 Пищевая ценность на 100г:
+                • Калории: ${product.калории} ккал
+                • Белки: ${product.белки}g
+                • Жиры: ${product.жиры}g
+                • Углеводы: ${product.углеводы}g
+                • Клетчатка: ${product.клетчатка}g
+                
+                💡 ${product.описание}
+                
+                🎯 Цель: ${currentGoal.replace('_', ' ')}
+                📂 Категория: ${category.replace('_', ' ')}
+            `;
+
+            // Отправляем данные в Telegram
+            tg.sendData(JSON.stringify({
+                action: 'product_details',
+                name: name,
+                category: category,
+                goal: currentGoal,
+                details: details
+            }));
+        }
+
+        // Инициализация
+        showCategories();
+    </script>
+</body>
+</html> 

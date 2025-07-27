@@ -1,0 +1,36 @@
+# Временные файлы
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.lock
+
+# Кеши
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Виртуальное окружение
+venv/
+env/
+
+# Логи
+*.log
+*.pid
+
+# IDE
+.vscode/
+.cursor/
+*.code-workspace
+
+# Резервные копии
+*.backup
+*.old
+main_backup_*.py
+main_cache_backup_*.py
