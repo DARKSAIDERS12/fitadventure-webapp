@@ -1,227 +1,227 @@
 # 🎯 FitAdventure Bot v5.0 Final
 
-**Ultra-precise Telegram bot for personalized nutrition planning with 98% accuracy**
+**Ультра-точный Telegram бот для персонального планирования питания с точностью 98%**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Telegram](https://img.shields.io/badge/Telegram-Bot-0088cc.svg)](https://telegram.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 🌟 Features
+## 🌟 Возможности
 
-### 🧠 **Ultra-Precise Calculations**
-- **98% accuracy** using scientific formulas
-- **Mifflin-St Jeor** BMR calculation
-- **Multi-factor TDEE** analysis with activity coefficients
-- **Day-specific planning** (training vs rest days)
-- **Macro-nutrient optimization** (proteins, fats, carbs)
+### 🧠 **Ультра-Точные Расчеты**
+- **98% точность** с использованием научных формул
+- **Формула Mifflin-St Jeor** для расчета BMR
+- **Многофакторный анализ TDEE** с коэффициентами активности
+- **Планирование по дням** (тренировки vs отдых)
+- **Оптимизация макронутриентов** (белки, жиры, углеводы)
 
-### 🎮 **Mini-Apps Integration**
-- **Products Database** with 6 categories:
-  - 🌾 Complex carbohydrates
-  - ⚡ Simple carbohydrates
-  - 🥩 Proteins
-  - 🫒 Unsaturated fats
-  - 🧈 Saturated fats
-  - 🌿 Fiber
-- **Search functionality** by product name
-- **Goal-based recommendations**
-- **Detailed nutritional information**
+### 🎮 **Интеграция Мини-Приложений**
+- **База продуктов** с 6 категориями:
+  - 🌾 Сложные углеводы
+  - ⚡ Простые углеводы
+  - 🥩 Белки
+  - 🫒 Ненасыщенные жиры
+  - 🧈 Насыщенные жиры
+  - 🌿 Клетчатка
+- **Функция поиска** по названию продукта
+- **Рекомендации под цели**
+- **Детальная информация о питательности**
 
-### 📱 **Modern Interface**
-- **Persistent reply keyboard** with bottom buttons
-- **Web App integration** for enhanced UX
-- **Multi-language support** (Russian/English)
-- **Responsive design** for all devices
+### 📱 **Современный Интерфейс**
+- **Постоянная клавиатура** с кнопками внизу экрана
+- **Интеграция Web App** для улучшенного UX
+- **Поддержка нескольких языков** (русский/английский)
+- **Адаптивный дизайн** для всех устройств
 
-### 🔧 **Advanced Features**
-- **Consultation system** with expert connection
-- **Auto-backup** and conflict resolution
-- **Monitoring systems** with auto-fix capabilities
-- **Deployment ready** (Railway, Vercel, Cloudflare)
+### 🔧 **Продвинутые Функции**
+- **Система консультаций** с подключением эксперта
+- **Автоматическое резервное копирование** и разрешение конфликтов
+- **Системы мониторинга** с возможностями автоисправления
+- **Готовность к развертыванию** (Railway, Vercel, Cloudflare)
 
-## 🚀 Quick Start
+## 🚀 Быстрый Старт
 
-### Prerequisites
+### Требования
 - Python 3.8+
-- Telegram Bot Token (from @BotFather)
-- Internet connection
+- Токен Telegram бота (от @BotFather)
+- Интернет-соединение
 
-### Installation
+### Установка
 
-1. **Clone the repository**
+1. **Клонируйте репозиторий**
 ```bash
-git clone <your-repo-url>
+git clone <url-вашего-репозитория>
 cd FitAdventureBot/mybot2
 ```
 
-2. **Install dependencies**
+2. **Установите зависимости**
 ```bash
 pip install -r requirements.txt
 ```
 
-3. **Set up environment**
+3. **Настройте окружение**
 ```bash
-# Create .env file with your bot token
-echo "TELEGRAM_BOT_TOKEN=your_bot_token_here" > .env
+# Создайте .env файл с токеном вашего бота
+echo "TELEGRAM_BOT_TOKEN=ваш_токен_бота_здесь" > .env
 ```
 
-4. **Run the bot**
+4. **Запустите бота**
 ```bash
 python main.py
 ```
 
-### 🎯 **First Run Setup**
-The bot will automatically guide you through token setup if not found in `.env` file.
+### 🎯 **Настройка при первом запуске**
+Бот автоматически проведет вас через настройку токена, если он не найден в файле `.env`.
 
-## 📊 **Scientific Foundation**
+## 📊 **Научная Основа**
 
-### **BMR Calculation (Mifflin-St Jeor)**
+### **Расчет BMR (Mifflin-St Jeor)**
 ```
-Men: BMR = 10 × weight + 6.25 × height - 5 × age + 5
-Women: BMR = 10 × weight + 6.25 × height - 5 × age - 161
-```
-
-### **Activity Factors**
-- **Work activity**: Office (0.15), Healthcare (0.25), Construction (0.35)
-- **Training activity**: Strength (0.08), Endurance (0.06), CrossFit (0.1)
-- **Intensity multipliers**: Low (0.8), Moderate (1.0), High (1.2), Very High (1.4)
-- **Recovery factors**: Sleep quality and stress level adjustments
-
-### **Goal Adjustments**
-- **Weight Loss**: -15% calorie deficit
-- **Maintenance**: 0% adjustment
-- **Muscle Gain**: +10% calorie surplus
-
-## 🎮 **Mini-Apps Features**
-
-### **Products Database**
-- **6 categories** with 100+ products
-- **Detailed nutritional info** (calories, macros per 100g)
-- **Goal-specific recommendations**
-- **Search and filter** functionality
-
-### **Web App Integration**
-- **Responsive HTML interface**
-- **Real-time product search**
-- **Category-based browsing**
-- **Mobile-optimized design**
-
-## 🔧 **Technical Architecture**
-
-### **Core Components**
-```
-main.py                 # Main bot application
-products_database.py    # Products data and categories
-products_mini_app.py    # Mini-apps functionality
-mini_apps.py           # Legacy mini-apps support
-ultra_precise_formulas.py # Scientific calculations
+Мужчины: BMR = 10 × вес + 6.25 × рост - 5 × возраст + 5
+Женщины: BMR = 10 × вес + 6.25 × рост - 5 × возраст - 161
 ```
 
-### **Deployment Files**
+### **Коэффициенты Активности**
+- **Рабочая активность**: Офис (0.15), Здравоохранение (0.25), Строительство (0.35)
+- **Тренировочная активность**: Силовые (0.08), Выносливость (0.06), Кроссфит (0.1)
+- **Множители интенсивности**: Низкая (0.8), Средняя (1.0), Высокая (1.2), Очень высокая (1.4)
+- **Факторы восстановления**: Корректировки качества сна и уровня стресса
+
+### **Корректировки под Цели**
+- **Похудение**: -15% дефицит калорий
+- **Поддержание**: 0% корректировка
+- **Набор массы**: +10% профицит калорий
+
+## 🎮 **Функции Мини-Приложений**
+
+### **База Продуктов**
+- **6 категорий** с 100+ продуктами
+- **Детальная информация о питательности** (калории, макронутриенты на 100г)
+- **Рекомендации под цели**
+- **Функции поиска и фильтрации**
+
+### **Интеграция Web App**
+- **Адаптивный HTML интерфейс**
+- **Поиск продуктов в реальном времени**
+- **Просмотр по категориям**
+- **Дизайн, оптимизированный для мобильных устройств**
+
+## 🔧 **Техническая Архитектура**
+
+### **Основные Компоненты**
 ```
-Procfile              # Railway deployment
-vercel.json           # Vercel deployment
-railway.json          # Railway configuration
-runtime.txt           # Python runtime specification
+main.py                 # Основное приложение бота
+products_database.py    # Данные продуктов и категории
+products_mini_app.py    # Функциональность мини-приложений
+mini_apps.py           # Поддержка устаревших мини-приложений
+ultra_precise_formulas.py # Научные расчеты
 ```
 
-### **Web Interface**
+### **Файлы Развертывания**
 ```
-webapp/               # Web application files
-templates/            # HTML templates
-index.html            # Main web interface
-products_webapp.html  # Products web app
+Procfile              # Развертывание на Railway
+vercel.json           # Развертывание на Vercel
+railway.json          # Конфигурация Railway
+runtime.txt           # Спецификация Python runtime
 ```
 
-## 📱 **Bot Commands**
+### **Веб-Интерфейс**
+```
+webapp/               # Файлы веб-приложения
+templates/            # HTML шаблоны
+index.html            # Основной веб-интерфейс
+products_webapp.html  # Веб-приложение продуктов
+```
 
-| Command | Description |
-|---------|-------------|
-| `/start` | Start the bot and begin survey |
-| `/help` | Show help information |
-| `/cancel` | Cancel current operation |
+## 📱 **Команды Бота**
 
-### **Persistent Buttons**
-- 🚀 **Начать** - Start new calculation
-- ❓ **Помощь** - Show help
-- 🎮 **Мини-приложения** - Access mini-apps
-- 📊 **О боте** - About the bot
+| Команда | Описание |
+|---------|----------|
+| `/start` | Запустить бота и начать опрос |
+| `/help` | Показать справочную информацию |
+| `/cancel` | Отменить текущую операцию |
 
-## 🌐 **Deployment Options**
+### **Постоянные Кнопки**
+- 🚀 **Начать** - Начать новый расчет
+- ❓ **Помощь** - Показать справку
+- 🎮 **Мини-приложения** - Доступ к мини-приложениям
+- 📊 **О боте** - Информация о боте
 
-### **Railway Deployment**
+## 🌐 **Варианты Развертывания**
+
+### **Развертывание на Railway**
 ```bash
-# Automatic deployment via Railway
-# Uses Procfile and requirements.txt
+# Автоматическое развертывание через Railway
+# Использует Procfile и requirements.txt
 ```
 
-### **Vercel Deployment**
+### **Развертывание на Vercel**
 ```bash
-# Web app deployment
-# Configured via vercel.json
+# Развертывание веб-приложения
+# Настроено через vercel.json
 ```
 
-### **Local Development**
+### **Локальная Разработка**
 ```bash
-# Run with auto-token setup
+# Запуск с автоматической настройкой токена
 python main.py
 ```
 
-## 📚 **Documentation**
+## 📚 **Документация**
 
-### **Guides Available**
-- `WEBAPP_SETUP_GUIDE.md` - Web app setup instructions
-- `PRODUCTS_MINI_APP_GUIDE.md` - Mini-apps development guide
-- `TESTING_GUIDE.md` - Testing procedures
-- `BACKUP_GUIDE.md` - Backup and recovery procedures
+### **Доступные Руководства**
+- `WEBAPP_SETUP_GUIDE.md` - Инструкции по настройке веб-приложения
+- `PRODUCTS_MINI_APP_GUIDE.md` - Руководство по разработке мини-приложений
+- `TESTING_GUIDE.md` - Процедуры тестирования
+- `BACKUP_GUIDE.md` - Процедуры резервного копирования и восстановления
 
-### **Status Reports**
-- `PROJECT_COMPLETE.md` - Project completion status
-- `STATUS_REPORT.md` - Current development status
-- `BOT_STATUS_AND_FIXES.md` - Known issues and fixes
+### **Отчеты о Статусе**
+- `PROJECT_COMPLETE.md` - Статус завершения проекта
+- `STATUS_REPORT.md` - Текущий статус разработки
+- `BOT_STATUS_AND_FIXES.md` - Известные проблемы и исправления
 
-## 🔒 **Security Features**
+## 🔒 **Функции Безопасности**
 
-- **Environment variable** token storage
-- **Input validation** for all user data
-- **Error handling** with graceful degradation
-- **Logging system** for debugging and monitoring
+- **Хранение токена** в переменных окружения
+- **Валидация ввода** для всех пользовательских данных
+- **Обработка ошибок** с плавной деградацией
+- **Система логирования** для отладки и мониторинга
 
-## 📈 **Performance**
+## 📈 **Производительность**
 
-- **98% calculation accuracy**
-- **Fast response times** (< 2 seconds)
-- **Memory efficient** data structures
-- **Scalable architecture** for multiple users
+- **98% точность расчетов**
+- **Быстрое время отклика** (< 2 секунды)
+- **Эффективные по памяти** структуры данных
+- **Масштабируемая архитектура** для множества пользователей
 
-## 🤝 **Contributing**
+## 🤝 **Участие в Разработке**
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+1. Форкните репозиторий
+2. Создайте ветку для функции
+3. Внесите изменения
+4. Тщательно протестируйте
+5. Отправьте pull request
 
-## 📄 **License**
+## 📄 **Лицензия**
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Этот проект лицензирован под MIT License - см. файл LICENSE для деталей.
 
-## 🆘 **Support**
+## 🆘 **Поддержка**
 
-- **Documentation**: Check the guides in the repository
-- **Issues**: Create an issue in the repository
-- **Consultation**: Use the bot's consultation feature
+- **Документация**: Проверьте руководства в репозитории
+- **Проблемы**: Создайте issue в репозитории
+- **Консультация**: Используйте функцию консультации бота
 
-## 🎯 **Roadmap**
+## 🎯 **Планы Развития**
 
-- [ ] Multi-language support expansion
-- [ ] Advanced analytics dashboard
-- [ ] Integration with fitness trackers
-- [ ] AI-powered meal recommendations
-- [ ] Social features and challenges
+- [ ] Расширение поддержки нескольких языков
+- [ ] Продвинутая аналитическая панель
+- [ ] Интеграция с фитнес-трекерами
+- [ ] Рекомендации блюд на основе ИИ
+- [ ] Социальные функции и челленджи
 
 ---
 
-**Developed with ❤️ for achieving your fitness goals!**
+**Разработано с ❤️ для достижения ваших фитнес-целей!**
 
-*FitAdventure Bot v5.0 Final - Where science meets personalization* 
+*FitAdventure Bot v5.0 Final - Где наука встречается с персонализацией* 
