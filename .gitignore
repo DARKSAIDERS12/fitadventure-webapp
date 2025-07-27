@@ -1,14 +1,30 @@
+# Конфиденциальные файлы
+.env
+*.pem
+*.key
+*.crt
+
+# Логи и отладочные файлы
+*.log
+bot_*.log
+fitadventure_*.log
+ngrok.log
+cloudflared.log
+webapp_*.log
+
+# Резервные копии
+*.backup*
+*.bak
+*.old
+*_backup*
+*_old*
+backup_*/
+backups/
+old_versions/
+
 # Временные файлы
 *.tmp
 *.temp
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-*.lock
-
-# Кеши
 __pycache__/
 *.pyc
 *.pyo
@@ -16,21 +32,40 @@ __pycache__/
 .Python
 *.so
 
-# Виртуальное окружение
+# Ngrok и Cloudflare
+ngrok
+ngrok-*
+cloudflared*
+*.deb
+*.tgz
+
+# Тестовые файлы
+test_*.py
+*_test.py
+
+# IDE файлы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Виртуальные окружения
 venv/
 env/
+ENV/
 
-# Логи
-*.log
-*.pid
+# Файлы развертывания (если не нужны в репозитории)
+# railway.json
+# vercel.json
+# Procfile
+# runtime.txt
 
-# IDE
-.vscode/
-.cursor/
-*.code-workspace
-
-# Резервные копии
-*.backup
-*.old
-main_backup_*.py
-main_cache_backup_*.py
+# Другие временные файлы
+*.txt
+!requirements.txt
+!README*.txt
