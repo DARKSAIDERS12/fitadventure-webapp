@@ -67,6 +67,10 @@ def main():
         context.load_cert_chain(cert_file, key_file)
         server.socket = context.wrap_socket(server.socket, server_side=True)
         
+        # Привязываем сервер к адресу
+        server.server_bind()
+        server.server_activate()
+        
         print(f"🌐 HTTPS URL: https://localhost:{port}")
         print(f"📱 Web App URL: https://localhost:{port}/webapp_products.html")
         print("⚠️  Внимание: Используйте самоподписанный сертификат для локальной разработки")

@@ -1,0 +1,789 @@
+import os
+import logging
+from dotenv import load_dotenv
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
+from telegram.ext import Application, CommandHandler, ConversationHandler, MessageHandler, filters, CallbackQueryHandler, ContextTypes
+from telegram.constants import ParseMode
+from ultra_precise_formulas import generate_maximum_precision_recommendations
+
+# Загружаем переменные окружения из .env файла
+load_dotenv()
+
+# --- Логирование ---
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# --- Состояния ---
+LANGUAGE_CHOICE, GENDER, AGE, WEIGHT, HEIGHT, FAT_PERCENTAGE, FAT_PERCENTAGE_INPUT, GOAL, TRAINING_EXPERIENCE, TRAINING_DAYS, ACTIVITY_TYPE, WORKOUT_DURATION, STEPS, INTENSITY, RECOVERY, SLEEP_QUALITY, STRESS_LEVEL, OCCUPATION = range(18)
+
+# --- Хранилище ---
+user_data_storage = {}
+
+# === МУЛЬТИЯЗЫЧНАЯ СТРУКТУРА ===
+TEXTS = {
+    'ru': {
+        'welcome': "🎯 **Добро пожаловать в FitAdventure!**\n\nЯ помогу создать персональный план питания для достижения ваших целей.\n\n🚀 Готовы начать путь к телу мечты?",
+        'choose_language': "🌍 **Выберите язык / Choose language:**",
+        'language_set': "✅ Язык установлен: Русский",
+        'start_analysis': "🎯 **Начать анализ**",
+        'help_info': "ℹ️ **Подробнее**",
+        'help_button': "❓ **Помощь**",
+        'progress_bar': "📊 **Прогресс:** {current}/{total} шагов\n{'▓' * current}{'░' * (total - current)}",
+        'stage_gender': "👤 **Этап 1/8:** Ваш пол?",
+        'stage_age': "🎂 **Этап 2/8:** Ваш возраст?",
+        'stage_weight': "⚖️ **Этап 3/8:** Ваш вес (кг)?",
+        'stage_height': "📏 **Этап 4/8:** Ваш рост (см)?",
+        'stage_fat': "🔥 **Этап 5/8:** Знаете ли вы процент жира?",
+        'stage_goal': "🎯 **Этап 6/8:** Ваша цель?",
+        'stage_experience': "💪 **Этап 7/8:** Опыт тренировок?",
+        'stage_activity': "🏃 **Этап 8/8:** Детали активности",
+        'male': "👨 Мужчина",
+        'female': "👩 Женщина",
+        'know_fat': "✅ Да, знаю",
+        'dont_know_fat': "❌ Не знаю",
+        'goal_loss': "📉 Похудение",
+        'goal_maintain': "⚖️ Поддержание",
+        'goal_gain': "📈 Набор массы",
+        'exp_beginner': "🌱 Новичок",
+        'exp_intermediate': "🔥 Средний",
+        'exp_advanced': "⚡ Опытный",
+        'activity_strength': "🏋️ Силовые",
+        'activity_cardio': "🏃 Выносливость", 
+        'activity_crossfit': "⚡ Кроссфит",
+        'result_title': "🎉 **Ваш ультра-точный план питания готов!**",
+        'calculating': "🧠 Выполняю ультра-точные расчеты с учетом всех факторов...",
+        'precision_info': "🎯 **Точность расчета:** {precision}%",
+        'stage_intensity': "🔥 **Этап 9/12:** Интенсивность тренировок?",
+        'stage_recovery': "😴 **Этап 10/12:** Качество восстановления?",
+        'stage_sleep': "🌙 **Этап 11/12:** Качество сна?",
+        'stage_lifestyle': "💼 **Этап 12/12:** Образ жизни",
+        'intensity_low': "🟢 Низкая",
+        'intensity_moderate': "🟡 Средняя",
+        'intensity_high': "🔴 Высокая",
+        'intensity_very_high': "⚡ Очень высокая",
+        'recovery_excellent': "⭐ Отличное",
+        'recovery_good': "✅ Хорошее",
+        'recovery_average': "🔶 Среднее",
+        'recovery_poor': "❌ Плохое",
+        'sleep_excellent': "😴 Отличный (8+ часов)",
+        'sleep_good': "😊 Хороший (7-8 часов)",
+        'sleep_average': "😐 Средний (6-7 часов)",
+        'sleep_poor': "😞 Плохой (<6 часов)",
+        'stress_low': "😌 Низкий (1-3)",
+        'stress_medium': "😐 Средний (4-6)",
+        'stress_high': "😰 Высокий (7-10)",
+        'occupation_office': "💻 Офисная работа",
+        'occupation_active': "🏃 Активная работа",
+        'occupation_physical': "💪 Физический труд",
+        'error_invalid': "❌ Пожалуйста, введите корректное значение",
+        'canceled': "❌ Анализ отменен",
+        'help_text': "📚 **Справка FitAdventure**\n\n🎯 Этот бот поможет рассчитать персональный план питания\n\n📊 Мы учитываем:\n• Ваши физические параметры\n• Цели и опыт тренировок\n• Уровень активности\n• Процент жира в организме\n\n✨ Получите точные рекомендации по калориям и макронутриентам!"
+    },
+    'en': {
+        'welcome': "🎯 **Welcome to FitAdventure!**\n\nI'll help create a personalized nutrition plan to achieve your goals.\n\n🚀 Ready to start your journey to your dream body?",
+        'choose_language': "🌍 **Choose language / Выберите язык:**",
+        'language_set': "✅ Language set: English",
+        'start_analysis': "🎯 **Start Analysis**",
+        'help_info': "ℹ️ **More Info**",
+        'help_button': "❓ **Help**",
+        'progress_bar': "📊 **Progress:** {current}/{total} steps\n{'▓' * current}{'░' * (total - current)}",
+        'stage_gender': "👤 **Step 1/8:** Your gender?",
+        'stage_age': "🎂 **Step 2/8:** Your age?",
+        'stage_weight': "⚖️ **Step 3/8:** Your weight (kg)?",
+        'stage_height': "📏 **Step 4/8:** Your height (cm)?",
+        'stage_fat': "🔥 **Step 5/8:** Do you know your body fat %?",
+        'stage_goal': "🎯 **Step 6/8:** Your goal?",
+        'stage_experience': "💪 **Step 7/8:** Training experience?",
+        'stage_activity': "🏃 **Step 8/8:** Activity details",
+        'male': "👨 Male",
+        'female': "👩 Female",
+        'know_fat': "✅ Yes, I know",
+        'dont_know_fat': "❌ Don't know",
+        'goal_loss': "📉 Weight Loss",
+        'goal_maintain': "⚖️ Maintenance",
+        'goal_gain': "📈 Muscle Gain",
+        'exp_beginner': "🌱 Beginner",
+        'exp_intermediate': "🔥 Intermediate",
+        'exp_advanced': "⚡ Advanced",
+        'activity_strength': "🏋️ Strength",
+        'activity_cardio': "🏃 Cardio", 
+        'activity_crossfit': "⚡ CrossFit",
+        'result_title': "🎉 **Your ultra-precise nutrition plan is ready!**",
+        'calculating': "🧠 Performing ultra-precise calculations with all factors...",
+        'precision_info': "🎯 **Calculation Accuracy:** {precision}%",
+        'stage_intensity': "🔥 **Step 9/12:** Training intensity?",
+        'stage_recovery': "😴 **Step 10/12:** Recovery quality?",
+        'stage_sleep': "🌙 **Step 11/12:** Sleep quality?",
+        'stage_lifestyle': "💼 **Step 12/12:** Lifestyle",
+        'intensity_low': "🟢 Low",
+        'intensity_moderate': "🟡 Moderate",
+        'intensity_high': "🔴 High",
+        'intensity_very_high': "⚡ Very High",
+        'recovery_excellent': "⭐ Excellent",
+        'recovery_good': "✅ Good",
+        'recovery_average': "🔶 Average",
+        'recovery_poor': "❌ Poor",
+        'sleep_excellent': "😴 Excellent (8+ hours)",
+        'sleep_good': "😊 Good (7-8 hours)",
+        'sleep_average': "😐 Average (6-7 hours)",
+        'sleep_poor': "😞 Poor (<6 hours)",
+        'stress_low': "😌 Low (1-3)",
+        'stress_medium': "😐 Medium (4-6)",
+        'stress_high': "😰 High (7-10)",
+        'occupation_office': "💻 Office work",
+        'occupation_active': "🏃 Active work",
+        'occupation_physical': "💪 Physical work",
+        'error_invalid': "❌ Please enter a valid value",
+        'canceled': "❌ Analysis canceled",
+        'help_text': "📚 **FitAdventure Help**\n\n🎯 This bot helps calculate personalized nutrition plans\n\n📊 We consider:\n• Your physical parameters\n• Goals and training experience\n• Activity level\n• Body fat percentage\n\n✨ Get precise recommendations for calories and macronutrients!"
+    }
+}
+
+def get_text(user_id: int, key: str) -> str:
+    """Получить текст на языке пользователя"""
+    user_lang = user_data_storage.get(user_id, {}).get('language', 'ru')
+    return TEXTS[user_lang].get(key, TEXTS['ru'][key])
+
+def get_progress_bar(current: int, total: int = 12) -> str:
+    """Генерация прогресс-бара для 12-этапного опроса"""
+    filled = min(current, total)
+    return f"📊 **Прогресс:** {filled}/{total}\n{'▓' * filled}{'░' * (total - filled)}"
+
+# --- Старые расчетные функции заменены на ультра-точную систему ---
+# Все расчеты теперь выполняются в ultra_precise_formulas.py
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Стартовая команда с выбором языка"""
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id] = {}
+    
+    # Красивые крупные кнопки выбора языка
+    keyboard = [
+        [InlineKeyboardButton("🇷🇺 Русский", callback_data='lang_ru')],
+        [InlineKeyboardButton("🇺🇸 English", callback_data='lang_en')]
+    ]
+    
+    await update.message.reply_text(
+        "🌍 **Выберите язык / Choose language:**",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return LANGUAGE_CHOICE
+
+async def language_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка выбора языка"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    if query.data == 'lang_ru':
+        user_data_storage[chat_id]['language'] = 'ru'
+        lang_text = "✅ Язык установлен: Русский"
+    else:
+        user_data_storage[chat_id]['language'] = 'en'
+        lang_text = "✅ Language set: English"
+    
+    # Персонализированное приветствие с прогресс-баром
+    welcome_text = get_text(chat_id, 'welcome')
+    progress = get_progress_bar(0, 12)
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'start_analysis'), callback_data='start_analysis')],
+        [InlineKeyboardButton(get_text(chat_id, 'help_info'), callback_data='help_info'),
+         InlineKeyboardButton(get_text(chat_id, 'help_button'), callback_data='help')]
+    ]
+    
+    await query.edit_message_text(
+        f"{lang_text}\n\n{welcome_text}\n\n{progress}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return LANGUAGE_CHOICE
+
+async def start_analysis(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Начало анализа"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    progress = get_progress_bar(1, 12)
+    stage_text = get_text(chat_id, 'stage_gender')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'male'), callback_data='мужчина')],
+        [InlineKeyboardButton(get_text(chat_id, 'female'), callback_data='женщина')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return GENDER
+
+async def gender(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка выбора пола"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['gender'] = query.data
+    
+    progress = get_progress_bar(2, 12)
+    stage_text = get_text(chat_id, 'stage_age')
+    
+    await query.edit_message_text(
+        f"{progress}\n\n{stage_text}",
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return AGE
+
+async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка возраста"""
+    try:
+        age_value = int(update.message.text)
+        if not (10 <= age_value <= 100):
+            raise ValueError
+    except ValueError:
+        await update.message.reply_text(get_text(update.message.chat_id, 'error_invalid'))
+        return AGE
+    
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id]['age'] = age_value
+    
+    progress = get_progress_bar(3, 12)
+    stage_text = get_text(chat_id, 'stage_weight')
+    
+    await update.message.reply_text(
+        f"{progress}\n\n{stage_text}",
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return WEIGHT
+
+async def weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка веса"""
+    try:
+        weight_value = float(update.message.text)
+        if not (30 <= weight_value <= 300):
+            raise ValueError
+    except ValueError:
+        await update.message.reply_text(get_text(update.message.chat_id, 'error_invalid'))
+        return WEIGHT
+    
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id]['weight'] = weight_value
+    
+    progress = get_progress_bar(4, 12)
+    stage_text = get_text(chat_id, 'stage_height')
+    
+    await update.message.reply_text(
+        f"{progress}\n\n{stage_text}",
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return HEIGHT
+
+async def height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка роста"""
+    try:
+        height_value = float(update.message.text)
+        if not (100 <= height_value <= 250):
+            raise ValueError
+    except ValueError:
+        await update.message.reply_text(get_text(update.message.chat_id, 'error_invalid'))
+        return HEIGHT
+    
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id]['height'] = height_value
+    
+    progress = get_progress_bar(5, 12)
+    stage_text = get_text(chat_id, 'stage_fat')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'know_fat'), callback_data='know_fat')],
+        [InlineKeyboardButton(get_text(chat_id, 'dont_know_fat'), callback_data='dont_know_fat')]
+    ]
+    
+    await update.message.reply_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return FAT_PERCENTAGE
+
+async def fat_percentage(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка знания процента жира"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    
+    if query.data == 'know_fat':
+        await query.edit_message_text("🔥 Введите процент жира (5-50%):")
+        return FAT_PERCENTAGE_INPUT
+    else:
+        user_data_storage[chat_id]['fat_percent'] = None
+        return await show_goal_selection(query, chat_id)
+
+async def fat_percentage_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка ввода процента жира"""
+    try:
+        fat_value = float(update.message.text)
+        if not (5 <= fat_value <= 50):
+            raise ValueError
+    except ValueError:
+        await update.message.reply_text(get_text(update.message.chat_id, 'error_invalid'))
+        return FAT_PERCENTAGE_INPUT
+    
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id]['fat_percent'] = fat_value
+    
+    return await show_goal_selection_text(update, chat_id)
+
+async def show_goal_selection(query, chat_id) -> int:
+    """Показать выбор цели (callback)"""
+    progress = get_progress_bar(6, 12)
+    stage_text = get_text(chat_id, 'stage_goal')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'goal_loss'), callback_data='Похудение')],
+        [InlineKeyboardButton(get_text(chat_id, 'goal_maintain'), callback_data='Поддержание')],
+        [InlineKeyboardButton(get_text(chat_id, 'goal_gain'), callback_data='Набор массы')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return GOAL
+
+async def show_goal_selection_text(update, chat_id) -> int:
+    """Показать выбор цели (text)"""
+    progress = get_progress_bar(6, 12)
+    stage_text = get_text(chat_id, 'stage_goal')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'goal_loss'), callback_data='Похудение')],
+        [InlineKeyboardButton(get_text(chat_id, 'goal_maintain'), callback_data='Поддержание')],
+        [InlineKeyboardButton(get_text(chat_id, 'goal_gain'), callback_data='Набор массы')]
+    ]
+    
+    await update.message.reply_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return GOAL
+
+async def goal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка выбора цели"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['goal'] = query.data
+    
+    progress = get_progress_bar(7, 12)
+    stage_text = get_text(chat_id, 'stage_experience')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'exp_beginner'), callback_data='Новичок')],
+        [InlineKeyboardButton(get_text(chat_id, 'exp_intermediate'), callback_data='Средний')],
+        [InlineKeyboardButton(get_text(chat_id, 'exp_advanced'), callback_data='Опытный')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return TRAINING_EXPERIENCE
+
+async def training_experience(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка опыта тренировок"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['training_experience'] = query.data
+    
+    progress = get_progress_bar(8, 12)
+    stage_text = get_text(chat_id, 'stage_activity')
+    
+    keyboard = [
+        [InlineKeyboardButton("1 день", callback_data='1'),
+         InlineKeyboardButton("2 дня", callback_data='2'),
+         InlineKeyboardButton("3 дня", callback_data='3')],
+        [InlineKeyboardButton("4 дня", callback_data='4'),
+         InlineKeyboardButton("5 дней", callback_data='5'),
+         InlineKeyboardButton("6 дней", callback_data='6')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n🏃 **Сколько дней в неделю тренируетесь?**",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return TRAINING_DAYS
+
+async def training_days(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка дней тренировок"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['training_days'] = int(query.data)
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'activity_strength'), callback_data='Силовые')],
+        [InlineKeyboardButton(get_text(chat_id, 'activity_cardio'), callback_data='Выносливость')],
+        [InlineKeyboardButton(get_text(chat_id, 'activity_crossfit'), callback_data='Кроссфит')]
+    ]
+    
+    await query.edit_message_text(
+        "💪 **Тип тренировок?**",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return ACTIVITY_TYPE
+
+async def activity_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка типа активности"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['activity_type'] = query.data
+    
+    await query.edit_message_text(
+        "⏱️ **Продолжительность одной тренировки (минуты)?**",
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return WORKOUT_DURATION
+
+async def workout_duration(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка продолжительности тренировки"""
+    try:
+        duration = int(update.message.text)
+        if not (15 <= duration <= 300):
+            raise ValueError
+    except ValueError:
+        await update.message.reply_text(get_text(update.message.chat_id, 'error_invalid'))
+        return WORKOUT_DURATION
+    
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id]['workout_duration'] = duration
+    
+    await update.message.reply_text(
+        "🚶 **Количество шагов в день (примерно)?**",
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return STEPS
+
+async def steps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка шагов и переход к интенсивности"""
+    try:
+        steps_count = int(update.message.text)
+        if not (1000 <= steps_count <= 50000):
+            raise ValueError
+    except ValueError:
+        await update.message.reply_text(get_text(update.message.chat_id, 'error_invalid'))
+        return STEPS
+    
+    chat_id = update.message.chat_id
+    user_data_storage[chat_id]['steps'] = steps_count
+    
+    # Переходим к интенсивности тренировок
+    progress = get_progress_bar(9, 12)
+    stage_text = get_text(chat_id, 'stage_intensity')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'intensity_low'), callback_data='low')],
+        [InlineKeyboardButton(get_text(chat_id, 'intensity_moderate'), callback_data='moderate')],
+        [InlineKeyboardButton(get_text(chat_id, 'intensity_high'), callback_data='high')],
+        [InlineKeyboardButton(get_text(chat_id, 'intensity_very_high'), callback_data='very_high')]
+    ]
+    
+    await update.message.reply_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return INTENSITY
+
+async def intensity(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка интенсивности и переход к восстановлению"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['intensity'] = query.data
+    
+    progress = get_progress_bar(10, 12)
+    stage_text = get_text(chat_id, 'stage_recovery')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'recovery_excellent'), callback_data='excellent')],
+        [InlineKeyboardButton(get_text(chat_id, 'recovery_good'), callback_data='good')],
+        [InlineKeyboardButton(get_text(chat_id, 'recovery_average'), callback_data='average')],
+        [InlineKeyboardButton(get_text(chat_id, 'recovery_poor'), callback_data='poor')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return RECOVERY
+
+async def recovery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка восстановления и переход к сну"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['recovery'] = query.data
+    
+    progress = get_progress_bar(11, 12)
+    stage_text = get_text(chat_id, 'stage_sleep')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'sleep_excellent'), callback_data='excellent')],
+        [InlineKeyboardButton(get_text(chat_id, 'sleep_good'), callback_data='good')],
+        [InlineKeyboardButton(get_text(chat_id, 'sleep_average'), callback_data='average')],
+        [InlineKeyboardButton(get_text(chat_id, 'sleep_poor'), callback_data='poor')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n{stage_text}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return SLEEP_QUALITY
+
+async def sleep_quality(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка сна и переход к стрессу"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['sleep_quality'] = query.data
+    
+    progress = get_progress_bar(12, 12)
+    stage_text = get_text(chat_id, 'stage_lifestyle')
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'stress_low'), callback_data='2')],
+        [InlineKeyboardButton(get_text(chat_id, 'stress_medium'), callback_data='5')],
+        [InlineKeyboardButton(get_text(chat_id, 'stress_high'), callback_data='8')]
+    ]
+    
+    await query.edit_message_text(
+        f"{progress}\n\n💆 **Уровень стресса в жизни?**",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return STRESS_LEVEL
+
+async def stress_level(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка стресса и переход к профессии"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['stress_level'] = int(query.data)
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'occupation_office'), callback_data='office')],
+        [InlineKeyboardButton(get_text(chat_id, 'occupation_active'), callback_data='healthcare')],
+        [InlineKeyboardButton(get_text(chat_id, 'occupation_physical'), callback_data='construction')]
+    ]
+    
+    await query.edit_message_text(
+        "💼 **Тип работы?**",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return OCCUPATION
+
+async def occupation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Финальная обработка и ультра-точный расчет"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    user_data_storage[chat_id]['occupation'] = query.data
+    user_data_storage[chat_id]['user_id'] = str(chat_id)  # для адаптивного TDEE
+    
+    # Показываем процесс ультра-точного расчета
+    calculating_msg = await query.edit_message_text(
+        get_text(chat_id, 'calculating'),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    
+    # Генерируем ультра-точные рекомендации
+    try:
+        results = generate_maximum_precision_recommendations(user_data_storage[chat_id])
+        
+        # Красивое форматирование результата
+        result_title = get_text(chat_id, 'result_title')
+        precision_info = get_text(chat_id, 'precision_info').format(precision=results['precision_score'])
+        
+        final_message = f"""{result_title}
+
+{precision_info}
+
+🔥 <b>Целевые калории:</b> {results['target_calories']} ккал
+🥩 <b>Белки:</b> {results['protein_min']}-{results['protein_max']} г
+🥑 <b>Жиры:</b> {results['fats']} г  
+🍞 <b>Углеводы:</b> {results['carbs']} г
+🌾 <b>Клетчатка:</b> {results['fiber']} г
+
+📊 <b>Детальная разбивка:</b>
+• TDEE: {results['tdee']} ккал
+• BMR: {results['bmr']} ккал  
+• NEAT: {results['neat']} ккал
+• EAT: {results['eat']} ккал
+• TEF: {results['tef']} ккал
+• LBM: {results['lbm']} кг
+
+✨ <i>Расчеты учитывают ВСЕ индивидуальные факторы для максимальной точности!</i>"""
+        
+        await calculating_msg.edit_text(final_message, parse_mode=ParseMode.HTML)
+        
+        # Отправляем стикер успеха
+        try:
+            await query.message.reply_sticker(
+                sticker="CAACAgIAAxkBAAIBYWF5yK8PAAGgUYOsLw7RH1vwiHrmCQAC7gADBXQMGGKOXoekKG_eHgQ"
+            )
+        except:
+            await query.message.reply_text("🎉✨🎯")
+            
+    except Exception as e:
+        await calculating_msg.edit_text(f"❌ Ошибка расчета: {str(e)}")
+    
+    # Очистка данных
+    if chat_id in user_data_storage:
+        del user_data_storage[chat_id]
+    
+    return ConversationHandler.END
+
+async def help_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Подробная информация"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    help_text = get_text(chat_id, 'help_text')
+    
+    keyboard = [
+        [InlineKeyboardButton("← Назад", callback_data='back_to_start')]
+    ]
+    
+    await query.edit_message_text(
+        help_text,
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return LANGUAGE_CHOICE
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Команда помощи"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    help_text = get_text(chat_id, 'help_text')
+    
+    keyboard = [
+        [InlineKeyboardButton("← Назад", callback_data='back_to_start')]
+    ]
+    
+    await query.edit_message_text(
+        help_text,
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return LANGUAGE_CHOICE
+
+async def back_to_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Возврат к стартовому экрану"""
+    query = update.callback_query
+    await query.answer()
+    
+    chat_id = query.message.chat_id
+    welcome_text = get_text(chat_id, 'welcome')
+    progress = get_progress_bar(0, 8)
+    
+    keyboard = [
+        [InlineKeyboardButton(get_text(chat_id, 'start_analysis'), callback_data='start_analysis')],
+        [InlineKeyboardButton(get_text(chat_id, 'help_info'), callback_data='help_info'),
+         InlineKeyboardButton(get_text(chat_id, 'help_button'), callback_data='help')]
+    ]
+    
+    await query.edit_message_text(
+        f"{welcome_text}\n\n{progress}",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+    return LANGUAGE_CHOICE
+
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Отмена анализа"""
+    chat_id = update.message.chat_id
+    await update.message.reply_text(
+        get_text(chat_id, 'canceled'),
+        reply_markup=ReplyKeyboardRemove()
+    )
+    if chat_id in user_data_storage:
+        del user_data_storage[chat_id]
+    return ConversationHandler.END
+
+def main() -> None:
+    """Главная функция запуска бота"""
+    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not TOKEN:
+        logger.error("TELEGRAM_BOT_TOKEN не установлен!")
+        return
+        
+    application = Application.builder().token(TOKEN).build()
+    
+    # Настройка ConversationHandler с мультиязычностью
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', start)],
+        states={
+            LANGUAGE_CHOICE: [
+                CallbackQueryHandler(language_choice, pattern='^lang_'),
+                CallbackQueryHandler(start_analysis, pattern='^start_analysis$'),
+                CallbackQueryHandler(help_info, pattern='^help_info$'),
+                CallbackQueryHandler(help_command, pattern='^help$'),
+                CallbackQueryHandler(back_to_start, pattern='^back_to_start$')
+            ],
+            GENDER: [CallbackQueryHandler(gender)],
+            AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, age)],
+            WEIGHT: [MessageHandler(filters.TEXT & ~filters.COMMAND, weight)],
+            HEIGHT: [MessageHandler(filters.TEXT & ~filters.COMMAND, height)],
+            FAT_PERCENTAGE: [CallbackQueryHandler(fat_percentage)],
+            FAT_PERCENTAGE_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, fat_percentage_input)],
+            GOAL: [CallbackQueryHandler(goal)],
+            TRAINING_EXPERIENCE: [CallbackQueryHandler(training_experience)],
+            TRAINING_DAYS: [CallbackQueryHandler(training_days)],
+            ACTIVITY_TYPE: [CallbackQueryHandler(activity_type)],
+            WORKOUT_DURATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, workout_duration)],
+            STEPS: [MessageHandler(filters.TEXT & ~filters.COMMAND, steps)],
+            INTENSITY: [CallbackQueryHandler(intensity)],
+            RECOVERY: [CallbackQueryHandler(recovery)],
+            SLEEP_QUALITY: [CallbackQueryHandler(sleep_quality)],
+            STRESS_LEVEL: [CallbackQueryHandler(stress_level)],
+            OCCUPATION: [CallbackQueryHandler(occupation)],
+        },
+        fallbacks=[CommandHandler('cancel', cancel)],
+    )
+
+    application.add_handler(conv_handler)
+    
+    logger.info("🚀 FitAdventure Bot запущен с мультиязычностью!")
+    application.run_polling()
+
+if __name__ == '__main__':
+    main() 

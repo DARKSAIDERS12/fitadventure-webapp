@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Простой HTTP сервер для Web App базы продуктов
+Исправленный веб-сервер для Web App базы продуктов
 """
 
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -9,66 +9,39 @@ import os
 import sys
 from pathlib import Path
 
-class WebAppHandler(SimpleHTTPRequestHandler):
+class CustomHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
-        # Добавляем CORS заголовки для Telegram Web App
+        # Добавляем CORS заголовки для Web App
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.send_header('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org")
         super().end_headers()
     
     def do_GET(self):
-        print(f"📥 Запрос: {self.path}")
+        print(f"📥 Получен запрос: {self.path}")
         
-        # Перенаправляем корневой путь на Web App
+        # Перенаправляем корневой путь на наш HTML файл
         if self.path == '/':
             self.path = '/webapp_products.html'
-            print(f"🔄 Перенаправление на Web App")
+            print(f"🔄 Перенаправление на: {self.path}")
         
-        # Проверяем существование файла
+        # Проверяем, существует ли файл
         file_path = os.path.join(os.getcwd(), self.path.lstrip('/'))
         if not os.path.exists(file_path):
             print(f"❌ Файл не найден: {file_path}")
-            # Возвращаем простую страницу с ошибкой
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-            error_html = f"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Ошибка 404</title>
-                <meta charset="utf-8">
-            </head>
-            <body>
-                <h1>Файл не найден</h1>
-                <p>Запрошенный файл: {self.path}</p>
-                <p>Полный путь: {file_path}</p>
-                <p>Текущая директория: {os.getcwd()}</p>
-                <p>Доступные файлы:</p>
-                <ul>
-            """
-            for file in os.listdir('.'):
-                if file.endswith('.html'):
-                    error_html += f'<li><a href="/{file}">{file}</a></li>'
-            error_html += """
-                </ul>
-            </body>
-            </html>
-            """
-            self.wfile.write(error_html.encode('utf-8'))
+            self.send_error(404, "File not found")
             return
         
         print(f"✅ Файл найден: {file_path}")
         return super().do_GET()
     
     def log_message(self, format, *args):
+        # Улучшенное логирование
         print(f"📝 {format % args}")
 
 def main():
     port = 8080
-    print(f"🚀 Запуск простого HTTP веб-сервера на порту {port}")
+    print(f"🚀 Запуск исправленного веб-сервера на порту {port}")
     
     # Меняем директорию на текущую
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -85,12 +58,13 @@ def main():
     
     try:
         # Создаем HTTP сервер
-        server = HTTPServer(('0.0.0.0', port), WebAppHandler)
+        server = HTTPServer(('localhost', port), CustomHandler)
         
         print(f"🌐 HTTP URL: http://localhost:{port}")
         print(f"📱 Web App URL: http://localhost:{port}/webapp_products.html")
         print("⚠️  Внимание: Для Telegram Web App нужен HTTPS")
         print("⌨️ Нажмите Ctrl+C для остановки")
+        print("🔍 Тестирование: curl http://localhost:8080/webapp_products.html")
         
         server.serve_forever()
         
@@ -98,6 +72,8 @@ def main():
         print("\n✅ Сервер остановлен")
     except Exception as e:
         print(f"❌ Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main() 
