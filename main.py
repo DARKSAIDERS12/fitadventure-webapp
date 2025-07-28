@@ -41,21 +41,6 @@ except ImportError as e:
     print(f"⚠️ Мини-приложение базы продуктов недоступно: {e}")
     PRODUCTS_MINI_APP_AVAILABLE = False
 
-# Заглушки для отсутствующих функций
-if not MINI_APPS_AVAILABLE:
-    async def show_mini_apps_menu(update, context): return GENDER
-    async def handle_mini_apps_navigation(update, context): return GENDER
-    async def show_products_menu(update, context): return GENDER
-    async def search_product_handler(update, context): return GENDER
-    async def show_product_details(update, context): return GENDER
-
-if not PRODUCTS_MINI_APP_AVAILABLE:
-    async def show_products_mini_app(update, context): return GENDER
-    async def handle_products_navigation(update, context): return GENDER
-    async def handle_product_search(update, context): return GENDER
-    async def show_category_products(update, context): return GENDER
-    async def show_search_interface(update, context): return GENDER
-
 # === АВТОМАТИЧЕСКАЯ НАСТРОЙКА ТОКЕНА ===
 def setup_bot_token():
     """Автоматическая настройка токена бота"""
@@ -534,14 +519,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка кнопок мини-приложений
     elif text == '🍎 База продуктов':
         # Открываем Web App с базой продуктов
-        # Используем публичный URL или заглушку
-        try:
-            with open('webapp_url.txt', 'r') as f:
-                public_url = f.read().strip()
-                web_app_url = f"{public_url}/webapp_products.html"
-        except:
-            # Если нет публичного URL, используем заглушку
-            web_app_url = "https://example.com/webapp_products.html"
+        web_app_url = "https://fitadventure-products.web.app"
         
         # Создаем кнопку для открытия Web App
         keyboard = [[KeyboardButton(text="🍎 Открыть базу продуктов", web_app=WebAppInfo(url=web_app_url))]]
@@ -1793,6 +1771,7 @@ def main() -> None:
 
     application.add_handler(conv_handler)
     application.add_handler(CommandHandler('help', help_command))
+    application.add_handler(CommandHandler('start', start))
     
     # Добавляем обработчик для callback кнопок Web App
     from telegram.ext import CallbackQueryHandler

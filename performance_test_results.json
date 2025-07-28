@@ -1,0 +1,48 @@
+{
+  "calculation_performance": {
+    "total_iterations": 100,
+    "average_time_ms": 0.008647441864013672,
+    "median_time_ms": 0.007867813110351562,
+    "min_time_ms": 0.00762939453125,
+    "max_time_ms": 0.05364418029785156,
+    "std_deviation_ms": 0.004646627361959713,
+    "cache_hits": 99,
+    "cache_misses": 1,
+    "cache_hit_rate": 99.0,
+    "cache_size": 1
+  },
+  "memory_usage": {
+    "error": "psutil not available"
+  },
+  "concurrent_requests": {
+    "num_requests": 20,
+    "average_time_ms": 0.01436471939086914,
+    "total_time_ms": 0.2872943878173828,
+    "throughput_requests_per_second": 69615.0041493776
+  },
+  "error_handling": {
+    "total_tests": 7,
+    "errors_handled": 7,
+    "unexpected_results": 0,
+    "error_details": [
+      "Тест 1: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: weight, height, age, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!",
+      "Тест 2: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: height, age, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!",
+      "Тест 3: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: height, age, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!",
+      "Тест 4: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: weight, height, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!",
+      "Тест 5: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: weight, height, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!",
+      "Тест 6: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: weight, age, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!",
+      "Тест 7: Ошибка корректно обработана - ValueError: Не заполнены обязательные поля: weight, age, gender, steps, occupation, recovery, sleep_quality, stress_level, goal. Пройдите все этапы опроса!"
+    ]
+  },
+  "cache_functionality": {
+    "first_request_time_ms": 0.04,
+    "second_request_time_ms": 0.01,
+    "different_data_time_ms": 0.02,
+    "speedup_factor": 3.02,
+    "results_identical": true,
+    "cache_size": 2,
+    "cache_hits": 1,
+    "cache_misses": 2,
+    "hit_rate": 33.33
+  }
+}

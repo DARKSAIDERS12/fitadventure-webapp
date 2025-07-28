@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-HTTPS Web App Server для FitAdventure Bot
+Публичный HTTP Web App Server для FitAdventure Bot
 """
 
 import os
-import ssl
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 
@@ -25,14 +24,8 @@ class WebAppHandler(SimpleHTTPRequestHandler):
 
 def main():
     # Настройки сервера
-    PORT = 8443
-    CERT_FILE = 'cert.pem'
-    KEY_FILE = 'key.pem'
-    
-    # Проверяем наличие сертификатов
-    if not os.path.exists(CERT_FILE) or not os.path.exists(KEY_FILE):
-        print(f"❌ Сертификаты не найдены: {CERT_FILE}, {KEY_FILE}")
-        return
+    PORT = 8080
+    HOST = '0.0.0.0'  # Слушаем на всех интерфейсах
     
     # Проверяем наличие Web App файла
     webapp_file = Path('webapp_products.html')
@@ -40,20 +33,17 @@ def main():
         print(f"❌ Web App файл не найден: {webapp_file}")
         return
     
-    # Создаем HTTPS сервер
-    server_address = ('', PORT)
+    # Создаем HTTP сервер
+    server_address = (HOST, PORT)
     httpd = HTTPServer(server_address, WebAppHandler)
     
-    # Настраиваем SSL
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain(CERT_FILE, KEY_FILE)
-    httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
-    
-    print(f"🚀 HTTPS Web App Server запущен на порту {PORT}")
-    print(f"🔒 Сертификаты: {CERT_FILE}, {KEY_FILE}")
+    print(f"🚀 Публичный HTTP Web App Server запущен")
+    print(f"🌐 Хост: {HOST}")
+    print(f"📡 Порт: {PORT}")
     print(f"📁 Web App: {webapp_file.absolute()}")
-    print(f"🌐 HTTPS URL: https://localhost:{PORT}")
-    print(f"📱 Web App URL: https://localhost:{PORT}/webapp_products.html")
+    print(f"🌐 HTTP URL: http://localhost:{PORT}")
+    print(f"📱 Web App URL: http://localhost:{PORT}/webapp_products.html")
+    print("⚠️  Внимание: Для Telegram Web App нужен HTTPS")
     print("⌨️ Нажмите Ctrl+C для остановки")
     
     try:
