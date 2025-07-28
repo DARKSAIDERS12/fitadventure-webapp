@@ -3,228 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>База продуктов FitAdventure</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>FitAdventure Mini App</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .header {
+        .container {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 8px;
-            color: var(--tg-theme-text-color, #000000);
-        }
-
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .category-btn {
-            padding: 16px 12px;
-            border: none;
-            border-radius: 12px;
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .category-btn:hover {
-            opacity: 0.8;
-        }
-
-        .products-container {
-            display: none;
-        }
-
-        .product-card {
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .product-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--tg-theme-text-color, #000000);
-        }
-
-        .product-info {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            font-size: 14px;
-            color: var(--tg-theme-hint-color, #999999);
-        }
-
-        .back-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 16px;
-        }
-
-        .loading {
-            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            color: var(--tg-theme-hint-color, #999999);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .feature {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🍎 База продуктов</h1>
-        <p>Выберите категорию продуктов</p>
+    <div class="container">
+        <h1>🍎 FitAdventure Mini App</h1>
+        <p>База продуктов для здорового питания с калорийностью и БЖУ</p>
+        
+        <a href="webapp_products.html" class="btn">🚀 Открыть приложение</a>
+        
+        <div class="features">
+            <div class="feature">
+                <strong>🌾 Сложные углеводы:</strong> овсянка, гречка, киноа, булгур
+            </div>
+            <div class="feature">
+                <strong>🥩 Белки:</strong> куриная грудка, рыба, яйца, творог
+            </div>
+            <div class="feature">
+                <strong>🫒 Ненасыщенные жиры:</strong> орехи, авокадо, оливковое масло
+            </div>
+            <div class="feature">
+                <strong>🌿 Клетчатка:</strong> овощи, бобовые, фрукты
+            </div>
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 0.9em; color: #999;">
+            Откройте в Telegram боте для полного функционала
+        </p>
     </div>
-
-    <div class="categories">
-        <button class="category-btn" onclick="showProducts('сложные_углеводы')">🌾 Сложные углеводы</button>
-        <button class="category-btn" onclick="showProducts('простые_углеводы')">⚡ Простые углеводы</button>
-        <button class="category-btn" onclick="showProducts('белки')">🥩 Белки</button>
-        <button class="category-btn" onclick="showProducts('ненасыщенные_жиры')">🫒 Ненасыщенные жиры</button>
-        <button class="category-btn" onclick="showProducts('насыщенные_жиры')">🧈 Насыщенные жиры</button>
-        <button class="category-btn" onclick="showProducts('клетчатка')">🌿 Клетчатка</button>
-    </div>
-
-    <div class="products-container" id="productsContainer">
-        <button class="back-btn" onclick="showCategories()">🔙 Назад к категориям</button>
-        <div id="productsList"></div>
-    </div>
-
+    
     <script>
-        // Инициализация Telegram Web App
-        let tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-
-        // База данных продуктов
-        const productsDatabase = {
-            "сложные_углеводы": {
-                "овсянка": {"калории": 389, "белки": 16.9, "жиры": 6.9, "углеводы": 66, "описание": "Медленные углеводы, надолго насыщают"},
-                "гречка": {"калории": 343, "белки": 13, "жиры": 3.4, "углеводы": 72, "описание": "Богата железом, идеальна для похудения"},
-                "киноа": {"калории": 120, "белки": 4.4, "жиры": 1.9, "углеводы": 22, "описание": "Полноценный белок, низкая калорийность"},
-                "булгур": {"калории": 342, "белки": 12, "жиры": 1.3, "углеводы": 76, "описание": "Быстро готовится, много клетчатки"}
-            },
-            "простые_углеводы": {
-                "мед": {"калории": 304, "белки": 0.3, "жиры": 0, "углеводы": 82, "описание": "Натуральный подсластитель"},
-                "банан": {"калории": 89, "белки": 1.1, "жиры": 0.3, "углеводы": 23, "описание": "Быстрая энергия, много калия"},
-                "яблоко": {"калории": 52, "белки": 0.3, "жиры": 0.2, "углеводы": 14, "описание": "Низкокалорийный фрукт"}
-            },
-            "белки": {
-                "куриная грудка": {"калории": 165, "белки": 31, "жиры": 3.6, "углеводы": 0, "описание": "Диетическое мясо"},
-                "индейка грудка": {"калории": 157, "белки": 29, "жиры": 3.6, "углеводы": 0, "описание": "Постное мясо индейки"},
-                "яичные белки": {"калории": 52, "белки": 11, "жиры": 0.2, "углеводы": 0.7, "описание": "Чистый белок без жира"},
-                "творог обезжиренный": {"калории": 88, "белки": 18, "жиры": 0.6, "углеводы": 1.8, "описание": "Много белка, мало жира"}
-            },
-            "ненасыщенные_жиры": {
-                "авокадо": {"калории": 160, "белки": 2, "жиры": 15, "углеводы": 9, "описание": "Полезные жиры"},
-                "оливковое масло": {"калории": 884, "белки": 0, "жиры": 100, "углеводы": 0, "описание": "Мононенасыщенные жиры"},
-                "орехи грецкие": {"калории": 654, "белки": 15, "жиры": 65, "углеводы": 14, "описание": "Омега-3 жиры"}
-            },
-            "насыщенные_жиры": {
-                "сливочное масло": {"калории": 717, "белки": 0.9, "жиры": 81, "углеводы": 0.1, "описание": "Животные жиры"},
-                "сыр твердый": {"калории": 350, "белки": 25, "жиры": 27, "углеводы": 0, "описание": "Кальций и белок"}
-            },
-            "клетчатка": {
-                "брокколи": {"калории": 34, "белки": 2.8, "жиры": 0.4, "углеводы": 7, "описание": "Витамин С и клетчатка"},
-                "цветная капуста": {"калории": 25, "белки": 1.9, "жиры": 0.3, "углеводы": 5, "описание": "Низкокалорийная"},
-                "шпинат": {"калории": 23, "белки": 2.9, "жиры": 0.4, "углеводы": 3.6, "описание": "Железо и витамины"}
-            }
-        };
-
-        function showProducts(category) {
-            const products = productsDatabase[category];
-            const productsList = document.getElementById('productsList');
-            const productsContainer = document.getElementById('productsContainer');
-            
-            let html = '';
-            for (const [name, data] of Object.entries(products)) {
-                html += `
-                    <div class="product-card" onclick="showProductDetails('${name}', '${category}')">
-                        <div class="product-name">${name.replace('_', ' ').toUpperCase()}</div>
-                        <div class="product-info">
-                            <div>🔥 ${data.калории} ккал</div>
-                            <div>🥩 ${data.белки}g</div>
-                            <div>🫒 ${data.жиры}g</div>
-                            <div>🌾 ${data.углеводы}g</div>
-                        </div>
-                        <div style="margin-top: 8px; font-size: 12px; color: var(--tg-theme-hint-color, #999999);">
-                            ${data.описание}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            productsList.innerHTML = html;
-            document.querySelector('.categories').style.display = 'none';
-            productsContainer.style.display = 'block';
-        }
-
-        function showCategories() {
-            document.querySelector('.categories').style.display = 'grid';
-            document.getElementById('productsContainer').style.display = 'none';
-        }
-
-        function showProductDetails(productName, category) {
-            const product = productsDatabase[category][productName];
-            const message = `
-🍎 ${productName.replace('_', ' ').toUpperCase()}
-
-📊 Пищевая ценность на 100г:
-🔥 Калории: ${product.калории} ккал
-🥩 Белки: ${product.белки}g
-🫒 Жиры: ${product.жиры}g
-🌾 Углеводы: ${product.углеводы}g
-
-💡 ${product.описание}
-
-📂 Категория: ${category.replace('_', ' ').toUpperCase()}
-            `;
-            
-            // Отправляем данные в Telegram
-            tg.sendData(JSON.stringify({
-                action: 'product_details',
-                name: productName,
-                details: message,
-                category: category
-            }));
-        }
+        // Автоматический редирект через 3 секунды
+        setTimeout(function() {
+            window.location.href = 'webapp_products.html';
+        }, 3000);
     </script>
 </body>
 </html> 
