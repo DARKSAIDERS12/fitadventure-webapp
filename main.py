@@ -20,9 +20,9 @@ from telegram.constants import ParseMode
 # Импорт мини-приложений
 try:
     from mini_apps import (
-        show_mini_apps_menu, handle_mini_apps_navigation,
-        show_products_menu, show_products_category, search_product_handler, 
-        show_product_details, show_recommendations
+        show_mini_apps_menu, handle_buttons,
+        show_products_menu, handle_buttons, handle_buttons, 
+        handle_buttons, show_recommendations
     )
     MINI_APPS_AVAILABLE = True
 except ImportError as e:
@@ -33,7 +33,7 @@ except ImportError as e:
 try:
     from products_mini_app import (
         show_products_mini_app, handle_products_navigation, handle_product_search,
-        show_category_products, show_product_details, show_search_interface,
+        show_category_products, handle_buttons, show_search_interface,
         show_recommendations, return_to_main_menu
     )
     PRODUCTS_MINI_APP_AVAILABLE = True
@@ -390,7 +390,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # Постоянные кнопки внизу экрана
     keyboard = [
         ['🚀 Начать', '❓ Помощь'],
-        ['🎮 Мини-приложения', '📊 О боте']
+        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/products_webapp.html')), '📊 О боте'],
+        [KeyboardButton('', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp/'))]
     ]
     reply_markup = ReplyKeyboardMarkup(
         keyboard, 
@@ -425,40 +426,12 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     text = update.message.text
     chat_id = update.message.chat_id
     
+    print(f"🔍 DEBUG: Получено сообщение '{text}' от пользователя {update.effective_user.id}")
+    
     if text == '🚀 Начать':
         return await start_survey(update, context)
     elif text == '❓ Помощь':
         return await help_command(update, context)
-    elif text == '🎮 Мини-приложения':
-        if MINI_APPS_AVAILABLE:
-            # Показываем меню мини-приложений напрямую
-            keyboard = [
-                ['🍎 База продуктов'],
-                ['🔙 Главное меню']
-            ]
-            
-            text = """🎮 **Мини-приложения FitAdventure**
-
-Выберите нужное приложение:
-
-🍎 **База продуктов** - калорийность и БЖУ продуктов
-   • 🌾 Сложные углеводы
-   • ⚡ Простые углеводы
-   • 🥩 Белки
-   • 🫒 Ненасыщенные жиры
-   • 🧈 Насыщенные жиры
-   • 🌿 Клетчатка
-   • 🔍 Поиск по названию
-   • 📊 Рекомендации под вашу цель
-   • 💡 Советы по употреблению"""
-            
-            reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-            
-            await update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
-            return GENDER
-        else:
-            await update.message.reply_text("⚠️ Мини-приложения временно недоступны. Попробуйте позже.")
-            return GENDER
     elif text == '📊 О боте':
         about_text = """🤖 **FitAdventure Bot v5.0**
 
@@ -468,7 +441,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 • Разделение по дням тренировок и отдыха
 • Персональные рекомендации
 • Современный интерфейс
-• 🎮 Мини-приложения (база продуктов)
+•  (база продуктов)
 
 🍎 **База продуктов включает:**
 • 🌾 Сложные углеводы (овсянка, гречка, киноа)
@@ -508,7 +481,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 🚀 **Готовы к трансформации?** Свяжитесь прямо сейчас!"""
         
-        keyboard = [['🚀 Начать заново', '❓ Помощь'], ['🎮 Мини-приложения', '📊 О боте']]
+        keyboard = [['🚀 Начать заново', '❓ Помощь'], ['📊 О боте']]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
         
         await update.message.reply_text(consultation_text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
@@ -516,57 +489,27 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == '🚀 Начать заново':
         return await start_survey(update, context)
     
-    # Обработка кнопок мини-приложений
-    elif text == '🍎 База продуктов':
-        # Открываем Web App с базой продуктов
-        web_app_url = "https://fitadventure-products.web.app"
-        
-        # Создаем кнопку для открытия Web App
-        keyboard = [[KeyboardButton(text="🍎 Открыть базу продуктов", web_app=WebAppInfo(url=web_app_url))]]
-        reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-        
-        text = """🍎 **База продуктов FitAdventure**
-
-📱 **Откройте мини-приложение для просмотра:**
-• 🌾 Сложные углеводы
-• ⚡ Простые углеводы  
-• 🥩 Белки
-• 🫒 Ненасыщенные жиры
-• 🧈 Насыщенные жиры
-• 🌿 Клетчатка
-
-🔍 **Возможности:**
-• Поиск по названию продукта
-• Фильтрация по категориям
-• Детальная информация о БЖУ
-• Рекомендации под вашу цель
-
-💡 **Нажмите кнопку ниже для открытия приложения**"""
-        
-        await update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
-        return GENDER
-    
     elif text == '🔙 Главное меню':
         return await return_to_main_menu(update, context)
     
     # Обработка кнопок базы продуктов
     elif text == '🌾 Сложные углеводы':
-        return await show_products_category(update, context, 'сложные_углеводы')
+        return await handle_buttons(update, context, 'сложные_углеводы')
     
     elif text == '⚡ Простые углеводы':
-        return await show_products_category(update, context, 'простые_углеводы')
+        return await handle_buttons(update, context, 'простые_углеводы')
     
     elif text == '🥩 Белки':
-        return await show_products_category(update, context, 'белки')
+        return await handle_buttons(update, context, 'белки')
     
     elif text == '🫒 Ненасыщенные жиры':
-        return await show_products_category(update, context, 'ненасыщенные_жиры')
+        return await handle_buttons(update, context, 'ненасыщенные_жиры')
     
     elif text == '🧈 Насыщенные жиры':
-        return await show_products_category(update, context, 'насыщенные_жиры')
+        return await handle_buttons(update, context, 'насыщенные_жиры')
     
     elif text == '🌿 Клетчатка':
-        return await show_products_category(update, context, 'клетчатка')
+        return await handle_buttons(update, context, 'клетчатка')
     
     elif text == '🔍 Поиск продукта':
         return await show_search_interface(update, context)
@@ -577,7 +520,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == '🔙 Назад':
         # Возвращаемся к меню мини-приложений
         keyboard = [
-            ['🍎 База продуктов'],
+            [''],
             ['🔙 Главное меню']
         ]
         
@@ -599,7 +542,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == '🔙 Назад к приложениям':
         # Возвращаемся к меню мини-приложений
         keyboard = [
-            ['🍎 База продуктов'],
+            [''],
             ['🔙 Главное меню']
         ]
         
@@ -614,6 +557,36 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
    • Детальная информация о продуктах"""
         
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+        
+        await update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
+        return GENDER
+    
+    elif text == '🔙 Назад к категориям':
+        # Возвращаемся к меню категорий продуктов
+        keyboard = [
+            ['🌾 Сложные углеводы', '⚡ Простые углеводы'],
+            ['🥩 Белки', '🫒 Ненасыщенные жиры'],
+            ['🧈 Насыщенные жиры', '🌿 Клетчатка'],
+            ['🔍 Поиск продукта', '📊 Рекомендации'],
+            ['🔙 Назад']
+        ]
+        reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+        
+        text = """🍎 **База продуктов FitAdventure**
+
+📊 **Выберите категорию продуктов:**
+
+🌾 **Сложные углеводы** - крупы, макароны, хлеб
+⚡ **Простые углеводы** - фрукты, сладости
+🥩 **Белки** - мясо, рыба, яйца, творог
+🫒 **Ненасыщенные жиры** - орехи, масла, авокадо
+🧈 **Насыщенные жиры** - сливочное масло, сало
+🌿 **Клетчатка** - овощи, отруби, бобовые
+
+🔍 **Поиск продукта** - найти по названию
+📊 **Рекомендации** - персональные советы
+
+💡 **Выберите категорию для просмотра продуктов**"""
         
         await update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
         return GENDER
@@ -673,7 +646,7 @@ async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info(f"[DEBUG] age() called. chat_id={chat_id}, text={text}")
     try:
         # Проверка на кнопки
-        if text in ['🚀 Начать', '❓ Помощь', '🌍 Язык', '📊 О боте']:
+        if text in ['🚀 Начать', '❓ Помощь', '📊 О боте']:
             return await handle_buttons(update, context)
         age_value = int(text)
         if not (16 <= age_value <= 80):
@@ -698,7 +671,7 @@ async def weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     chat_id = update.message.chat_id
     
     # Проверка на кнопки
-    if update.message.text in ['🚀 Начать', '❓ Помощь', '🌍 Язык', '📊 О боте']:
+    if update.message.text in ['🚀 Начать', '❓ Помощь', '📊 О боте']:
         return await handle_buttons(update, context)
     
     try:
@@ -723,7 +696,7 @@ async def height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     chat_id = update.message.chat_id
     
     # Проверка на кнопки
-    if update.message.text in ['🚀 Начать', '❓ Помощь', '🌍 Язык', '📊 О боте']:
+    if update.message.text in ['🚀 Начать', '❓ Помощь', '📊 О боте']:
         return await handle_buttons(update, context)
     
     try:
@@ -774,7 +747,7 @@ async def fat_percentage_input(update: Update, context: ContextTypes.DEFAULT_TYP
     chat_id = update.message.chat_id
     
     # Проверка на кнопки
-    if update.message.text in ['🚀 Начать', '❓ Помощь', '🌍 Язык', '📊 О боте']:
+    if update.message.text in ['🚀 Начать', '❓ Помощь', '📊 О боте']:
         return await handle_buttons(update, context)
     
     try:
@@ -980,7 +953,7 @@ async def workout_duration(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     chat_id = update.message.chat_id
     
     # Проверка на кнопки
-    if update.message.text in ['🚀 Начать', '❓ Помощь', '🌍 Язык', '📊 О боте']:
+    if update.message.text in ['🚀 Начать', '❓ Помощь', '📊 О боте']:
         return await handle_buttons(update, context)
     
     try:
@@ -1005,7 +978,7 @@ async def steps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     chat_id = update.message.chat_id
     
     # Проверка на кнопки
-    if update.message.text in ['🚀 Начать', '❓ Помощь', '🌍 Язык', '📊 О боте']:
+    if update.message.text in ['🚀 Начать', '❓ Помощь', '📊 О боте']:
         return await handle_buttons(update, context)
     
     try:
@@ -1224,7 +1197,7 @@ async def occupation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return OCCUPATION
     
     # Возвращаем постоянные кнопки
-    keyboard = [['🚀 Начать', '❓ Помощь'], ['🌍 Язык', '📊 О боте']]
+    keyboard = [['🚀 Начать', '❓ Помощь'], ['📊 О боте']]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     
     # Показываем процесс расчета
@@ -1331,8 +1304,12 @@ async def occupation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 🎯 Следуйте плану и достигайте своих целей!"""
 
-        # Добавляем кнопку консультации
-        consultation_keyboard = [['💬 Получить консультацию'], ['🚀 Начать заново', '❓ Помощь'], ['🌍 Язык', '📊 О боте']]
+        # Добавляем кнопку консультации и мини-приложения
+        consultation_keyboard = [
+            [KeyboardButton('💬 Получить консультацию'), KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/products_webapp.html'))],
+            ['🚀 Начать заново', '❓ Помощь'], 
+            ['🌍 Язык', '📊 О боте']
+        ]
         consultation_markup = ReplyKeyboardMarkup(consultation_keyboard, resize_keyboard=True)
         
         try:
@@ -1410,7 +1387,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Отмена анализа"""
     chat_id = update.message.chat_id
     
-    keyboard = [['🚀 Начать', '❓ Помощь'], ['🌍 Язык', '📊 О боте']]
+    keyboard = [['🚀 Начать', '❓ Помощь'], ['📊 О боте']]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     
     await update.message.reply_text(
@@ -1484,7 +1461,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return GENDER
 
 # === ФУНКЦИИ БАЗЫ ПРОДУКТОВ ===
-async def show_products_category(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str):
+async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str):
     """Показать продукты определенной категории"""
     from products_database import PRODUCTS_DATABASE
     
@@ -1604,7 +1581,8 @@ async def return_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Постоянные кнопки внизу экрана
     keyboard = [
         ['🚀 Начать', '❓ Помощь'],
-        ['🎮 Мини-приложения', '📊 О боте']
+        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/products_webapp.html')), '📊 О боте'],
+        [KeyboardButton('', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp/'))]
     ]
     reply_markup = ReplyKeyboardMarkup(
         keyboard, 
@@ -1666,100 +1644,100 @@ def main() -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             AGE: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, age)
             ],
             WEIGHT: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, weight)
             ],
             HEIGHT: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, height)
             ],
             FAT_PERCENTAGE: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, fat_percentage)
             ],
             FAT_PERCENTAGE_INPUT: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, fat_percentage_input)
             ],
             GOAL: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, goal)
             ],
             HAS_TRAINING_EXPERIENCE: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, has_training_experience)
             ],
             TRAINING_EXPERIENCE: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, training_experience)
             ],
             TRAINING_DAYS: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, training_days)
             ],
             ACTIVITY_TYPE: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, activity_type)
             ],
             WORKOUT_DURATION: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, workout_duration)
             ],
             STEPS: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, steps)
             ],
             INTENSITY: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, intensity)
             ],
             RECOVERY: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, recovery)
             ],
             SLEEP_QUALITY: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, sleep_quality)
             ],
             STRESS_LEVEL: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, stress_level)
             ],
             OCCUPATION: [
-                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|🎮 Мини-приложения|📊 О боте)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🚀 Начать|❓ Помощь|📊 О боте)$'), handle_buttons),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, occupation)
             ],
 
 
             # Добавляем недостающие состояния для мини-приложений
             MINI_APPS_MENU: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_mini_apps_navigation)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             PRODUCTS_MENU: [
-                MessageHandler(filters.Regex('^(🥩 Белки|🍞 Углеводы|🧈 Жиры)$'), show_products_category),
-                MessageHandler(filters.Regex('^(🔍 Поиск продукта|📊 Рекомендации|🔙 Назад)$'), search_product_handler),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, show_product_details)
+                MessageHandler(filters.Regex('^(🥩 Белки|🍞 Углеводы|🧈 Жиры)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🔍 Поиск продукта|📊 Рекомендации|🔙 Назад)$'), handle_buttons),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             PRODUCT_SEARCH: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, search_product_handler)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             
             # Состояния для нового мини-приложения базы продуктов
             PRODUCTS_MAIN: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_products_navigation)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             PRODUCTS_CATEGORY: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_products_navigation)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             PRODUCT_DETAILS: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_products_navigation)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             PRODUCT_SEARCH_NEW: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_product_search)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             "WEBAPP_CHOICE": [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
