@@ -20,9 +20,9 @@ from telegram.constants import ParseMode
 # Импорт мини-приложений
 try:
     from mini_apps import (
-        show_mini_apps_menu, handle_buttons,
-        show_products_menu, handle_buttons, handle_buttons, 
-        handle_buttons, show_recommendations
+        show_mini_apps_menu, handle_mini_apps_navigation,
+        show_products_menu, show_products_category, search_product_handler, 
+        show_product_details, show_recommendations
     )
     MINI_APPS_AVAILABLE = True
 except ImportError as e:
@@ -33,13 +33,21 @@ except ImportError as e:
 try:
     from products_mini_app import (
         show_products_mini_app, handle_products_navigation, handle_product_search,
-        show_category_products, handle_buttons, show_search_interface,
+        show_category_products, show_product_details, show_search_interface,
         show_recommendations, return_to_main_menu
     )
     PRODUCTS_MINI_APP_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️ Мини-приложение базы продуктов недоступно: {e}")
     PRODUCTS_MINI_APP_AVAILABLE = False
+
+# Импорт системы напоминаний о воде
+try:
+    from water_reminder_system import init_water_reminder_system, get_water_reminder_system
+    WATER_REMINDER_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ Система напоминаний о воде недоступна: {e}")
+    WATER_REMINDER_AVAILABLE = False
 
 # === АВТОМАТИЧЕСКАЯ НАСТРОЙКА ТОКЕНА ===
 def setup_bot_token():
@@ -108,6 +116,9 @@ MINI_APPS_MENU, PRODUCTS_MENU, PRODUCT_SEARCH = range(18, 21)
 
 # Состояния для нового мини-приложения базы продуктов
 PRODUCTS_MAIN, PRODUCTS_CATEGORY, PRODUCT_DETAILS, PRODUCT_SEARCH_NEW = range(21, 25)
+
+# Состояния для трекера воды
+WATER_TRACKER, WATER_REMINDERS, WATER_REMINDER_INTERVAL = range(25, 28)
 
 # --- Хранилище ---
 user_data_storage = {}
@@ -390,7 +401,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # Постоянные кнопки внизу экрана
     keyboard = [
         ['🚀 Начать', '❓ Помощь'],
-        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/products_webapp.html')), '📊 О боте'],
+        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=685')), '📊 О боте'],
         [KeyboardButton('', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp/'))]
     ]
     reply_markup = ReplyKeyboardMarkup(
@@ -492,24 +503,34 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == '🔙 Главное меню':
         return await return_to_main_menu(update, context)
     
+    # Обработка кнопок трекера воды
+    elif text == '💧 Трекер воды':
+        try:
+            from mini_apps import show_water_tracker
+            return await show_water_tracker(update, context)
+        except Exception as e:
+            logger.error(f"Ошибка открытия трекера воды: {e}")
+            await update.message.reply_text("❌ Ошибка открытия трекера воды")
+            return GENDER
+    
     # Обработка кнопок базы продуктов
     elif text == '🌾 Сложные углеводы':
-        return await handle_buttons(update, context, 'сложные_углеводы')
+        return await show_products_category(update, context, 'сложные_углеводы')
     
     elif text == '⚡ Простые углеводы':
-        return await handle_buttons(update, context, 'простые_углеводы')
+        return await show_products_category(update, context, 'простые_углеводы')
     
     elif text == '🥩 Белки':
-        return await handle_buttons(update, context, 'белки')
+        return await show_products_category(update, context, 'белки')
     
     elif text == '🫒 Ненасыщенные жиры':
-        return await handle_buttons(update, context, 'ненасыщенные_жиры')
+        return await show_products_category(update, context, 'ненасыщенные_жиры')
     
     elif text == '🧈 Насыщенные жиры':
-        return await handle_buttons(update, context, 'насыщенные_жиры')
+        return await show_products_category(update, context, 'насыщенные_жиры')
     
     elif text == '🌿 Клетчатка':
-        return await handle_buttons(update, context, 'клетчатка')
+        return await show_products_category(update, context, 'клетчатка')
     
     elif text == '🔍 Поиск продукта':
         return await show_search_interface(update, context)
@@ -1306,7 +1327,7 @@ async def occupation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
         # Добавляем кнопку консультации и мини-приложения
         consultation_keyboard = [
-            [KeyboardButton('💬 Получить консультацию'), KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/products_webapp.html'))],
+            [KeyboardButton('💬 Получить консультацию'), KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=685'))],
             ['🚀 Начать заново', '❓ Помощь'], 
             ['🌍 Язык', '📊 О боте']
         ]
@@ -1461,7 +1482,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return GENDER
 
 # === ФУНКЦИИ БАЗЫ ПРОДУКТОВ ===
-async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str):
+async def show_products_category(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str):
     """Показать продукты определенной категории"""
     from products_database import PRODUCTS_DATABASE
     
@@ -1581,7 +1602,7 @@ async def return_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Постоянные кнопки внизу экрана
     keyboard = [
         ['🚀 Начать', '❓ Помощь'],
-        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/products_webapp.html')), '📊 О боте'],
+        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=685')), '📊 О боте'],
         [KeyboardButton('', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp/'))]
     ]
     reply_markup = ReplyKeyboardMarkup(
@@ -1611,6 +1632,106 @@ async def return_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     
     return GENDER
 
+# === ОБРАБОТЧИКИ ТРЕКЕРА ВОДЫ ===
+async def handle_water_actions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка действий в трекере воды"""
+    try:
+        from mini_apps import add_water, show_water_statistics, show_water_reminders_menu, show_water_tracker, show_mini_apps_menu
+        text = update.message.text
+        
+        if text in ['💧 +250мл', '💧 +500мл', '💧 +1000мл', '🔄 Сбросить']:
+            return await add_water(update, context)
+        elif text == '📊 Статистика':
+            return await show_water_statistics(update, context)
+        elif text == '🔔 Напоминания':
+            return await show_water_reminders_menu(update, context)
+        elif text == '🔙 Назад':
+            return await show_mini_apps_menu(update, context)
+        else:
+            return await add_water(update, context)
+    except Exception as e:
+        logger.error(f"Ошибка в handle_water_actions: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return await show_water_tracker(update, context)
+
+async def handle_water_reminders(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка управления напоминаниями о воде"""
+    try:
+        from mini_apps import handle_water_reminders as mini_apps_handle_water_reminders
+        return await mini_apps_handle_water_reminders(update, context)
+    except Exception as e:
+        logger.error(f"Ошибка в handle_water_reminders: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return await show_water_tracker(update, context)
+
+async def handle_reminder_interval(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка выбора интервала напоминаний"""
+    try:
+        from mini_apps import handle_reminder_interval as mini_apps_handle_reminder_interval, show_water_reminders_menu
+        return await mini_apps_handle_reminder_interval(update, context)
+    except Exception as e:
+        logger.error(f"Ошибка в handle_reminder_interval: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return await show_water_reminders_menu(update, context)
+
+async def handle_products_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка выбора категории продуктов"""
+    try:
+        text = update.message.text
+        category_map = {
+            '🥩 Белки': 'белки',
+            '🍞 Углеводы': 'углеводы',
+            '🧈 Жиры': 'жиры'
+        }
+        
+        if text in category_map:
+            return await show_products_category(update, context, category_map[text])
+        else:
+            await update.message.reply_text("❌ Неизвестная категория")
+            return "PRODUCTS_MENU"
+    except Exception as e:
+        logger.error(f"Ошибка в handle_products_category: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return "PRODUCTS_MENU"
+
+async def handle_mini_apps_navigation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка навигации в мини-приложениях"""
+    try:
+        from mini_apps import handle_mini_apps_navigation as mini_apps_handle_mini_apps_navigation
+        return await mini_apps_handle_mini_apps_navigation(update, context)
+    except Exception as e:
+        logger.error(f"Ошибка в handle_mini_apps_navigation: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return "GENDER"
+
+async def handle_products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Обработка меню продуктов"""
+    try:
+        text = update.message.text
+        if text == '🔍 Поиск продукта':
+            return await show_search_interface(update, context)
+        elif text == '📊 Рекомендации':
+            return await show_recommendations(update, context)
+        elif text == '🔙 Назад':
+            return await show_mini_apps_menu(update, context)
+        else:
+            await update.message.reply_text("❌ Неизвестная команда")
+            return "PRODUCTS_MENU"
+    except Exception as e:
+        logger.error(f"Ошибка в handle_products_menu: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return "PRODUCTS_MENU"
+
+async def show_mini_apps_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Показать меню мини-приложений"""
+    try:
+        from mini_apps import show_mini_apps_menu as mini_apps_show_mini_apps_menu
+        return await mini_apps_show_mini_apps_menu(update, context)
+    except Exception as e:
+        logger.error(f"Ошибка в show_mini_apps_menu: {e}")
+        await update.message.reply_text("❌ Произошла ошибка. Попробуйте еще раз.")
+        return "GENDER"
+
 def main() -> None:
     """Главная функция запуска бота"""
     print("🚀 Запуск FitAdventure Bot v5.0 Final...")
@@ -1634,6 +1755,16 @@ def main() -> None:
         print(f"❌ Ошибка создания приложения: {e}")
         print("🔍 Проверьте правильность токена")
         sys.exit(1)
+    
+    # Инициализация системы напоминаний о воде
+    if WATER_REMINDER_AVAILABLE:
+        try:
+            init_water_reminder_system(TOKEN)
+            print("✅ Система напоминаний о воде инициализирована!")
+        except Exception as e:
+            print(f"⚠️ Ошибка инициализации системы напоминаний: {e}")
+    else:
+        print("⚠️ Система напоминаний о воде недоступна")
     
     # Настройка ConversationHandler
     conv_handler = ConversationHandler(
@@ -1715,15 +1846,34 @@ def main() -> None:
 
             # Добавляем недостающие состояния для мини-приложений
             MINI_APPS_MENU: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, lambda update, context: handle_mini_apps_navigation(update, context))
             ],
             PRODUCTS_MENU: [
-                MessageHandler(filters.Regex('^(🥩 Белки|🍞 Углеводы|🧈 Жиры)$'), handle_buttons),
-                MessageHandler(filters.Regex('^(🔍 Поиск продукта|📊 Рекомендации|🔙 Назад)$'), handle_buttons),
+                MessageHandler(filters.Regex('^(🥩 Белки|🍞 Углеводы|🧈 Жиры)$'), 
+                             lambda update, context: handle_products_category(update, context)),
+                MessageHandler(filters.Regex('^(🔍 Поиск продукта|📊 Рекомендации|🔙 Назад)$'), 
+                             lambda update, context: handle_products_menu(update, context)),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
             ],
             PRODUCT_SEARCH: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons)
+            ],
+            
+            # Состояния для трекера воды
+            WATER_TRACKER: [
+                MessageHandler(filters.Regex(r'^(💧 \+250мл|💧 \+500мл|💧 \+1000мл|🔄 Сбросить|📊 Статистика|🔔 Напоминания|🔙 Назад)$'), 
+                             lambda update, context: handle_water_actions(update, context)),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_water_actions)
+            ],
+            WATER_REMINDERS: [
+                MessageHandler(filters.Regex('^(🔔 Включить|🔕 Выключить|⚙️ Интервал|📊 Статистика напоминаний|🔙 Назад к трекеру)$'), 
+                             lambda update, context: handle_water_reminders(update, context)),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_water_reminders)
+            ],
+            WATER_REMINDER_INTERVAL: [
+                MessageHandler(filters.Regex('^(⏰ Каждые 1 час|⏰ Каждые 2 часа|⏰ Каждые 3 часа|⏰ Каждые 4 часа|🔙 Назад)$'), 
+                             lambda update, context: handle_reminder_interval(update, context)),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_reminder_interval)
             ],
             
             # Состояния для нового мини-приложения базы продуктов
