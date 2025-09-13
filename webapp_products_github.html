@@ -11,6 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+    </script>
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -18,6 +19,7 @@
             color: var(--tg-theme-text-color, #000000);
             padding: 16px;
         }
+    </script>
 
         .header {
             text-align: center;
@@ -26,16 +28,19 @@
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
             border-radius: 12px;
         }
+    </script>
 
         .header h1 {
             font-size: 24px;
             margin-bottom: 8px;
             color: var(--tg-theme-text-color, #000000);
         }
+    </script>
 
         .search-container {
             margin-bottom: 20px;
         }
+    </script>
 
         .search-input {
             width: 100%;
@@ -46,6 +51,7 @@
             background: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
         }
+    </script>
 
         .categories {
             display: grid;
@@ -53,6 +59,7 @@
             gap: 12px;
             margin-bottom: 20px;
         }
+    </script>
 
         .category-btn {
             padding: 16px 12px;
@@ -65,14 +72,17 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+    </script>
 
         .category-btn:hover {
             opacity: 0.8;
         }
+    </script>
 
         .products-container {
             display: none;
         }
+    </script>
 
         .product-card {
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
@@ -82,11 +92,13 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+    </script>
 
         .product-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+    </script>
 
         .product-name {
             font-size: 18px;
@@ -94,6 +106,7 @@
             margin-bottom: 8px;
             color: var(--tg-theme-text-color, #000000);
         }
+    </script>
 
         .product-info {
             display: grid;
@@ -101,6 +114,7 @@
             gap: 8px;
             font-size: 14px;
         }
+    </script>
 
         .back-btn {
             padding: 12px 20px;
@@ -112,12 +126,14 @@
             cursor: pointer;
             margin-bottom: 20px;
         }
+    </script>
 
         .loading {
             text-align: center;
             padding: 40px;
             color: var(--tg-theme-hint-color, #999999);
         }
+    </script>
         /* Стили планировщика питания */
         .modal {
             display: none;
@@ -129,6 +145,7 @@
             height: 100%;
             background-color: rgba(0,0,0,0.5);
         }
+    </script>
 
         .modal-content {
             background-color: var(--tg-theme-bg-color, #ffffff);
@@ -140,6 +157,7 @@
             max-height: 80vh;
             overflow-y: auto;
         }
+    </script>
 
         .close {
             color: var(--tg-theme-hint-color, #999999);
@@ -148,10 +166,12 @@
             font-weight: bold;
             cursor: pointer;
         }
+    </script>
 
         .close:hover {
             color: var(--tg-theme-text-color, #000000);
         }
+    </script>
 
         .meal-section {
             margin-bottom: 20px;
@@ -159,6 +179,7 @@
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
             border-radius: 8px;
         }
+    </script>
 
         .meal-title {
             font-size: 18px;
@@ -166,6 +187,7 @@
             margin-bottom: 10px;
             color: var(--tg-theme-text-color, #000000);
         }
+    </script>
 
         .product-item {
             background: var(--tg-theme-bg-color, #ffffff);
@@ -174,6 +196,7 @@
             border-radius: 6px;
             border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
         }
+    </script>
 
         .template-btn {
             background: var(--tg-theme-button-color, #2481cc);
@@ -185,10 +208,12 @@
             cursor: pointer;
             font-size: 14px;
         }
+    </script>
 
         .template-btn:hover {
             opacity: 0.8;
         }
+    </script>
     </style>
 </head>
 <body>
@@ -230,37 +255,44 @@
                 "киноа": {"калории": 120, "белки": 4.4, "жиры": 1.9, "углеводы": 22, "клетчатка": 2.8, "описание": "Полноценный белок, низкая калорийность"},
                 "булгур": {"калории": 342, "белки": 12, "жиры": 1.3, "углеводы": 76, "клетчатка": 8, "описание": "Быстро готовится, много клетчатки"},
                 "рис бурый": {"калории": 337, "белки": 7.4, "жиры": 2.2, "углеводы": 73, "клетчатка": 3.5, "описание": "Нешлифованный рис с оболочкой"}
-            },
+            }
+    </script>,
             "простые_углеводы": {
                 "мед": {"калории": 304, "белки": 0.3, "жиры": 0, "углеводы": 82, "клетчатка": 0, "описание": "Натуральный подсластитель"},
                 "банан": {"калории": 89, "белки": 1.1, "жиры": 0.3, "углеводы": 23, "клетчатка": 2.6, "описание": "Быстрая энергия, много калия"},
                 "яблоко": {"калории": 52, "белки": 0.3, "жиры": 0.2, "углеводы": 14, "клетчатка": 2.4, "описание": "Низкокалорийный фрукт"},
                 "виноград": {"калории": 62, "белки": 0.6, "жиры": 0.2, "углеводы": 16, "клетчатка": 0.9, "описание": "Сладкий и освежающий"}
-            },
+            }
+    </script>,
             "белки": {
                 "куриная грудка": {"калории": 165, "белки": 31, "жиры": 3.6, "углеводы": 0, "клетчатка": 0, "описание": "Диетическое мясо"},
                 "индейка грудка": {"калории": 157, "белки": 29, "жиры": 3.6, "углеводы": 0, "клетчатка": 0, "описание": "Постное мясо индейки"},
                 "яичные белки": {"калории": 52, "белки": 11, "жиры": 0.2, "углеводы": 0.7, "клетчатка": 0, "описание": "Чистый белок без жира"},
                 "творог обезжиренный": {"калории": 88, "белки": 18, "жиры": 0.6, "углеводы": 1.8, "клетчатка": 0, "описание": "Много белка, мало жира"},
                 "рыба белая": {"калории": 72, "белки": 16, "жиры": 0.9, "углеводы": 0, "клетчатка": 0, "описание": "Постная рыба"}
-            },
+            }
+    </script>,
             "ненасыщенные_жиры": {
                 "авокадо": {"калории": 160, "белки": 2, "жиры": 15, "углеводы": 9, "клетчатка": 6.7, "описание": "Полезные жиры"},
                 "оливковое масло": {"калории": 884, "белки": 0, "жиры": 100, "углеводы": 0, "клетчатка": 0, "описание": "Мононенасыщенные жиры"},
                 "орехи грецкие": {"калории": 654, "белки": 15, "жиры": 65, "углеводы": 14, "клетчатка": 6.7, "описание": "Омега-3 жиры"},
                 "миндаль": {"калории": 579, "белки": 21, "жиры": 50, "углеводы": 22, "клетчатка": 12.5, "описание": "Витамин Е"}
-            },
+            }
+    </script>,
             "насыщенные_жиры": {
                 "сливочное масло": {"калории": 717, "белки": 0.9, "жиры": 81, "углеводы": 0.1, "клетчатка": 0, "описание": "Животные жиры"},
                 "сыр твердый": {"калории": 350, "белки": 25, "жиры": 27, "углеводы": 0, "клетчатка": 0, "описание": "Кальций и белок"}
-            },
+            }
+    </script>,
             "клетчатка": {
                 "брокколи": {"калории": 34, "белки": 2.8, "жиры": 0.4, "углеводы": 7, "клетчатка": 2.6, "описание": "Витамин С и клетчатка"},
                 "цветная капуста": {"калории": 25, "белки": 1.9, "жиры": 0.3, "углеводы": 5, "клетчатка": 2.5, "описание": "Низкокалорийная"},
                 "шпинат": {"калории": 23, "белки": 2.9, "жиры": 0.4, "углеводы": 3.6, "клетчатка": 2.2, "описание": "Железо и витамины"},
                 "морковь": {"калории": 41, "белки": 0.9, "жиры": 0.2, "углеводы": 10, "клетчатка": 2.8, "описание": "Бета-каротин"}
             }
-        };
+    </script>
+        }
+    </script>;
 
         function showCategory(category) {
             const categories = document.getElementById('categories');
@@ -286,9 +318,11 @@
                     </div>
                 `;
             }
+    </script>
             
             productsList.innerHTML = html;
         }
+    </script>
 
         function showCategories() {
             const categories = document.getElementById('categories');
@@ -297,6 +331,7 @@
             categories.style.display = 'grid';
             productsContainer.style.display = 'none';
         }
+    </script>
 
         function showProductDetails(name, data) {
             const message = `🍎 ${name.toUpperCase()}
@@ -317,8 +352,10 @@
                 details: message,
                 goal: 'похудение',
                 category: 'продукты'
-            }));
+            }
+    </script>));
         }
+    </script>
 
         // Поиск продуктов
         document.getElementById('searchInput').addEventListener('input', function(e) {
@@ -331,13 +368,18 @@
                     if (name.toLowerCase().includes(query)) {
                         results.push({name, data, category});
                     }
+    </script>
                 }
+    </script>
             }
+    </script>
             
             if (results.length > 0) {
                 showSearchResults(results);
             }
-        });
+    </script>
+        }
+    </script>);
 
         function showSearchResults(results) {
             const categories = document.getElementById('categories');
@@ -361,10 +403,14 @@
                     </div>
                 `;
             }
+    </script>
             
             productsList.innerHTML = html;
         }
-        // Шаблоны питания
+    </script>
+    </script>
+</body>
+</html>         // Шаблоны питания
         const MEAL_TEMPLATES = {
             "похудение": {
                 "1200_калорий": {
@@ -395,7 +441,9 @@
                             {"название": "оливковое масло", "количество": 5, "категория": "ненасыщенные_жиры"}
                         ]
                     }
-                },
+    </script>
+                }
+    </script>,
                 "1500_калорий": {
                     "название": "Диета 1500 ккал",
                     "калории": 1500,
@@ -426,8 +474,11 @@
                             {"название": "авокадо", "количество": 50, "категория": "ненасыщенные_жиры"}
                         ]
                     }
+    </script>
                 }
-            },
+    </script>
+            }
+    </script>,
             "набор_массы": {
                 "2500_калорий": {
                     "название": "Набор массы 2500 ккал",
@@ -464,8 +515,11 @@
                             {"название": "орехи грецкие", "количество": 20, "категория": "ненасыщенные_жиры"}
                         ]
                     }
+    </script>
                 }
-            },
+    </script>
+            }
+    </script>,
             "поддержание": {
                 "2000_калорий": {
                     "название": "Поддержание 2000 ккал",
@@ -497,19 +551,25 @@
                             {"название": "авокадо", "количество": 50, "категория": "ненасыщенные_жиры"}
                         ]
                     }
+    </script>
                 }
+    </script>
             }
-        };
+    </script>
+        }
+    </script>;
 
         // Функции планировщика питания
         function openMealPlanner() {
             document.getElementById('mealPlannerModal').style.display = 'block';
             updateMealPlanDisplay();
         }
+    </script>
 
         function closeMealPlanner() {
             document.getElementById('mealPlannerModal').style.display = 'none';
         }
+    </script>
 
         function applyTemplate(goal, templateKey) {
             const templates = MEAL_TEMPLATES[goal];
@@ -518,6 +578,7 @@
                 alert('Шаблон не найден!');
                 return;
             }
+    </script>
 
             // Очищаем текущий план
             clearMealPlan();
@@ -533,31 +594,38 @@
                         product.категория
                     );
                 }
+    </script>
             }
+    </script>
 
             // Обновляем отображение
             updateMealPlanDisplay();
             alert('Шаблон применен успешно!');
         }
+    </script>
 
         function clearMealPlan() {
             const mealTypes = ['завтрак', 'перекус', 'обед', 'полдник', 'ужин', 'перед_сном'];
             mealTypes.forEach(mealType => {
-                const container = document.getElementById('${mealType}-products');
+                const container = document.getElementById(`${mealType}-products`);
                 if (container) {
                     container.innerHTML = '';
                 }
-                localStorage.removeItem('meal_plan_${mealType}');
-            });
+    </script>
+                localStorage.removeItem(`meal_plan_${mealType}`);
+            }
+    </script>);
         }
+    </script>
 
         function addProductToMealFromTemplate(productName, quantity, mealType, category) {
             // Получаем информацию о продукте из базы данных
-            const productInfo = productsDatabase[category]     </script>    </script> productsDatabase[category][productName];
+            const productInfo = productsDatabase[category] && productsDatabase[category][productName];
             if (!productInfo) {
                 console.error('Продукт не найден:', productName);
                 return false;
             }
+    </script>
 
             // Создаем объект продукта для планировщика
             const product = {
@@ -569,22 +637,24 @@
                 carbs: Math.round((productInfo.углеводы * quantity) / 100 * 10) / 10,
                 fiber: Math.round((productInfo.клетчатка * quantity) / 100 * 10) / 10,
                 description: productInfo.описание
-            };
+            }
+    </script>;
 
             // Добавляем в localStorage
-            const existingProducts = JSON.parse(localStorage.getItem('meal_plan_${mealType}') || '[]');
+            const existingProducts = JSON.parse(localStorage.getItem(`meal_plan_${mealType}`) || '[]');
             existingProducts.push(product);
-            localStorage.setItem('meal_plan_${mealType}', JSON.stringify(existingProducts));
+            localStorage.setItem(`meal_plan_${mealType}`, JSON.stringify(existingProducts));
             return true;
         }
+    </script>
 
         function updateMealPlanDisplay() {
             const mealTypes = ['завтрак', 'перекус', 'обед', 'полдник', 'ужин', 'перед_сном'];
             mealTypes.forEach(mealType => {
-                const container = document.getElementById('${mealType}-products');
+                const container = document.getElementById(`${mealType}-products`);
                 if (!container) return;
 
-                const products = JSON.parse(localStorage.getItem('meal_plan_${mealType}') || '[]');
+                const products = JSON.parse(localStorage.getItem(`meal_plan_${mealType}`) || '[]');
                 container.innerHTML = '';
 
                 products.forEach((product, index) => {
@@ -596,9 +666,12 @@
                         <div>${product.calories}ккал | Б:${product.proteins}г | Ж:${product.fats}г | У:${product.carbs}г</div>
                     `;
                     container.appendChild(productDiv);
-                });
-            });
+                }
+    </script>);
+            }
+    </script>);
         }
+    </script>
 
         // Закрытие модального окна при клике вне его
         window.onclick = function(event) {
@@ -606,7 +679,6 @@
             if (event.target == modal) {
                 modal.style.display = 'none';
             }
+    </script>
         }
     </script>
-</body>
-</html> 
