@@ -401,7 +401,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # Постоянные кнопки внизу экрана
     keyboard = [
         ['🚀 Начать', '❓ Помощь'],
-        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=685')), '📊 О боте'],
+        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=686')), '📊 О боте'],
         [KeyboardButton('', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp/'))]
     ]
     reply_markup = ReplyKeyboardMarkup(
@@ -1327,7 +1327,7 @@ async def occupation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
         # Добавляем кнопку консультации и мини-приложения
         consultation_keyboard = [
-            [KeyboardButton('💬 Получить консультацию'), KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=685'))],
+            [KeyboardButton('💬 Получить консультацию'), KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=686'))],
             ['🚀 Начать заново', '❓ Помощь'], 
             ['🌍 Язык', '📊 О боте']
         ]
@@ -1602,7 +1602,7 @@ async def return_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Постоянные кнопки внизу экрана
     keyboard = [
         ['🚀 Начать', '❓ Помощь'],
-        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=685')), '📊 О боте'],
+        [KeyboardButton('🍎 База продуктов', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp_products_github.html?v=686')), '📊 О боте'],
         [KeyboardButton('', web_app=WebAppInfo(url='https://darksaiders12.github.io/fitadventure-webapp/webapp/'))]
     ]
     reply_markup = ReplyKeyboardMarkup(
