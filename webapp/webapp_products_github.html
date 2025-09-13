@@ -376,6 +376,158 @@
             padding: 40px;
             color: var(--tg-theme-hint-color, #999999);
         }
+        /* Стили для планировщика питания */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .goal-selector {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .goal-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .goal-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .templates-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .template-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .template-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .meal-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .meal-section h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .products-list {
+            min-height: 50px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .product-item {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-info {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .product-amount {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .product-macros {
+            color: #888;
+            font-size: 11px;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .product-actions input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .product-actions button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -395,6 +547,7 @@
         <button class="category-btn" onclick="showCategory('ненасыщенные_жиры')">🫒 Ненасыщенные жиры</button>
         <button class="category-btn" onclick="showCategory('насыщенные_жиры')">🧈 Насыщенные жиры</button>
         <button class="category-btn" onclick="showCategory('клетчатка')">🌿 Клетчатка</button>
+        <button class="category-btn" onclick="openMealPlanner()">🍽️ Планировщик питания</button>
     </div>
 
     <div class="products-container" id="productsContainer">
@@ -448,6 +601,95 @@
             }
         };
 
+        // Функции для планировщика питания
+        function openMealPlanner() {
+            const plannerHtml = `
+                <div id="mealPlannerModal" class="modal" style="display: block;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>🍽️ Планировщик питания</h2>
+                            <span class="close" onclick="closeMealPlanner()">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="goal-selector">
+                                <h3>Выберите цель:</h3>
+                                <button onclick="setGoal('похудение')" class="goal-btn">�� Похудение</button>
+                                <button onclick="setGoal('набор_массы')" class="goal-btn">📈 Набор массы</button>
+                                <button onclick="setGoal('поддержание')" class="goal-btn">⚖️ Поддержание</button>
+                            </div>
+                            <div id="templatesContainer" class="templates-container"></div>
+                            <div class="meal-planner">
+                                <div class="meal-section">
+                                    <h3>�� Завтрак</h3>
+                                    <div id="завтрак-products" class="products-list"></div>
+                                </div>
+                                <div class="meal-section">
+                                    <h3>�� Перекус</h3>
+                                    <div id="перекус-products" class="products-list"></div>
+                                </div>
+                                <div class="meal-section">
+                                    <h3>��️ Обед</h3>
+                                    <div id="обед-products" class="products-list"></div>
+                                </div>
+                                <div class="meal-section">
+                                    <h3>🥤 Полдник</h3>
+                                    <div id="полдник-products" class="products-list"></div>
+                                </div>
+                                <div class="meal-section">
+                                    <h3>🌙 Ужин</h3>
+                                    <div id="ужин-products" class="products-list"></div>
+                                </div>
+                                <div class="meal-section">
+                                    <h3>🌙 Перед сном</h3>
+                                    <div id="перед_сном-products" class="products-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', plannerHtml);
+            loadTemplates();
+        }
+        
+        function closeMealPlanner() {
+            const modal = document.getElementById('mealPlannerModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function setGoal(goal) {
+            localStorage.setItem('currentGoal', goal);
+            loadTemplates();
+        }
+        
+        function getCurrentGoal() {
+            return localStorage.getItem('currentGoal') || 'похудение';
+        }
+        
+        function loadTemplates() {
+            const currentGoal = getCurrentGoal();
+            const templates = getTemplatesByGoal(currentGoal);
+            const templatesContainer = document.getElementById('templatesContainer');
+            
+            if (!templatesContainer) return;
+            
+            templatesContainer.innerHTML = '<h3>Шаблоны питания:</h3>';
+            
+            for (const templateKey in templates) {
+                const template = templates[templateKey];
+                const button = document.createElement('button');
+                button.className = 'template-btn';
+                button.textContent = `${template.название} (${template.калории} ккал)`;
+                button.onclick = () => applyTemplateToMealPlanner(templateKey, currentGoal);
+                templatesContainer.appendChild(button);
+            }
+        }
+        
+        function loadCategory(category) {
+            showCategory(category);
+        }
         function showCategory(category) {
             const categories = document.getElementById('categories');
             const productsContainer = document.getElementById('productsContainer');
