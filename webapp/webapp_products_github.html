@@ -5412,7 +5412,20 @@
                     productDiv.innerHTML = "<div class=\"product-info\"><span class=\"product-name\">" + product.name + "</span><span class=\"product-quantity\">" + product.quantity + "г</span></div><div class=\"product-nutrition\"><span class=\"calories\">" + product.calories + " ккал</span><span class=\"proteins\">Б: " + product.proteins + "г</span><span class=\"fats\">Ж: " + product.fats + "г</span><span class=\"carbs\">У: " + product.carbs + "г</span></div><button class=\"remove-product\" onclick=\"removeProductFromMeal(\"" + mealType + "\", " + index + ")\">×</button>";
                     container.appendChild(productDiv);
                 });
+                
+                // Обновляем mealPlan объект
+                mealPlan[mealType] = products.map(product => ({
+                    name: product.name,
+                    quantity: product.quantity,
+                    calories: product.calories,
+                    protein: product.proteins,
+                    fat: product.fats,
+                    carbs: product.carbs
+                }));
             });
+            
+            // Обновляем общую статистику
+            updateDailyStats();
         }
 
         
@@ -5496,17 +5509,23 @@
 
         
         function clearMealPlan() {
-            if (confirm('Вы уверены, что хотите очистить весь план питания?')) {
-                mealPlan = {
-                    breakfast: [],
-                    lunch: [],
-                    dinner: [],
-                    snacks: []
-                };
-                saveMealPlan();
-                renderMealSections();
-                updateDailyStats();
-            }
+            // Очищаем mealPlan объект
+            mealPlan = {
+                breakfast: [],
+                lunch: [],
+                dinner: [],
+                snacks: []
+            };
+            
+            // Очищаем localStorage
+            const mealTypes = ["breakfast", "lunch", "dinner", "snacks"];
+            mealTypes.forEach(mealType => {
+                localStorage.removeItem("meal_plan_" + mealType);
+            });
+            
+            // Обновляем отображение
+            renderMealSections();
+            updateDailyStats();
         }
 
         
