@@ -4850,9 +4850,26 @@
             });
         }
 
-        function addProductToMealFromTemplate(productName, quantity, mealType, category) {
+        function addProductToMealFromTemplate(productName, quantity, mealType) {
+        function findProductInDatabase(productName) {
+            // Ищем продукт во всех категориях
+            for (const [category, products] of Object.entries(productsDatabase)) {
+                for (const [name, info] of Object.entries(products)) {
+                    if (name.toLowerCase().includes(productName.toLowerCase()) || productName.toLowerCase().includes(name.toLowerCase())) {
+                        return { category, name, info };
+                    }
+                }
+            }
+            return null;
+        }
             // Получаем информацию о продукте из базы данных
-            const productInfo = productsDatabase[category] && productsDatabase[category][productName];
+            const productData = findProductInDatabase(productName);
+            if (!productData) {
+                console.error("Продукт не найден:", productName);
+                return false;
+            }
+            const productInfo = productData.info;
+            const actualCategory = productData.category;
             if (!productInfo) {
                 console.error('Продукт не найден:', productName);
                 return false;
