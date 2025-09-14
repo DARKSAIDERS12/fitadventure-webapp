@@ -3978,7 +3978,7 @@
                         ],
                         "ужин": [
                             {"название": "рыба белая", "количество": 100, "категория": "белки"},
-                            {"название": "салат латук", "количество": 100, "категория": "клетчатка"},
+                            {"название": "шпинат", "количество": 100, "категория": "клетчатка"},
                             {"название": "оливковое масло", "количество": 5, "категория": "ненасыщенные_жиры"}
                         ]
                     }
@@ -4038,7 +4038,7 @@
                             {"название": "оливковое масло", "количество": 15, "категория": "ненасыщенные_жиры"}
                         ],
                         "полдник": [
-                            {"название": "протеин сывороточный", "количество": 30, "категория": "белки"},
+                            {"название": "творог", "количество": 30, "категория": "белки"},
                             {"название": "банан", "количество": 100, "категория": "простые_углеводы"}
                         ],
                         "ужин": [
@@ -4129,9 +4129,28 @@
             });
         }
 
-        function addProductToMealFromTemplate(productName, quantity, mealType, category) {
+        function addProductToMealFromTemplate(productName, quantity, mealType) {
+        function findProductInDatabase(productName) {
+            // Ищем продукт во всех категориях и целях
+            for (const [category, goals] of Object.entries(productsDatabase)) {
+                for (const [goal, products] of Object.entries(goals)) {
+                    for (const [name, info] of Object.entries(products)) {
+                        if (name.toLowerCase().includes(productName.toLowerCase()) || productName.toLowerCase().includes(name.toLowerCase())) {
+                            return { category, name, info };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
             // Получаем информацию о продукте из базы данных
-            const productInfo = productsDatabase[category] && productsDatabase[category][productName];
+            const productData = findProductInDatabase(productName);
+            if (!productData) {
+                console.error("Продукт не найден:", productName);
+                return false;
+            }
+            const productInfo = productData.info;
+            const actualCategory = productData.category;
             if (!productInfo) {
                 console.error('Продукт не найден:', productName);
                 return false;
