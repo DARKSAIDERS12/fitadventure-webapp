@@ -4967,11 +4967,11 @@
         }
 
         function loadMealTemplates() {
+            const templatesList = document.getElementById("templatesList");
             if (templatesList) {
                 templatesList.style.display = templatesList.style.display === "none" ? "block" : "none";
             }
             const templates = getTemplatesByGoal(currentGoal);
-            const templatesList = document.getElementById('templatesList');
             if (!templatesList) return;
 
             templatesList.innerHTML = '';
@@ -5571,18 +5571,6 @@
             }
         }
 
-        function loadMealTemplates() {
-            if (templatesList) {
-                templatesList.style.display = templatesList.style.display === "none" ? "block" : "none";
-            }
-            if (templatesList) {
-                templatesList.style.display = templatesList.style.display === "none" ? "block" : "none";
-            }
-            // Пока что простое сообщение, в будущем можно добавить готовые шаблоны
-            alert('Функция шаблонов будет добавлена в следующем обновлении!');
-        }
-        
-        // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
             // Принудительно очищаем кэш
             if ('caches' in window) {
