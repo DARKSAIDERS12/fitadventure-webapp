@@ -380,67 +380,6 @@
         }
 
         .planner-btn:hover {
-        .templates-list {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-            padding: 10px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 10px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
-        }
-        .template-item {
-            background: var(--tg-theme-bg-color, #ffffff);
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease;
-        }
-        .template-item:hover {
-            transform: translateY(-3px);
-        }
-        .template-info h4 {
-            color: var(--tg-theme-text-color, #000000);
-            margin-bottom: 5px;
-            font-size: 1.1em;
-        }
-        .template-info p {
-            color: var(--tg-theme-hint-color, #888888);
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-        .template-goal {
-            color: var(--tg-theme-hint-color, #888);
-            font-size: 12px;
-            font-weight: normal;
-            text-transform: capitalize;
-        }
-        .template-calories {
-            color: var(--tg-theme-button-color, #2481cc);
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .template-actions {
-            margin-top: 10px;
-            text-align: right;
-        }
-        .apply-template-btn {
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            border-radius: 8px;
-            padding: 8px 15px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .apply-template-btn:active {
-            background: var(--tg-theme-button-color, #1a6bb2);
-        }
             opacity: 0.8;
         }
 
@@ -700,7 +639,6 @@
             <button class="planner-btn" onclick="saveMealPlan()">💾 Сохранить план</button>
             <button class="planner-btn" onclick="clearMealPlan()">🗑️ Очистить план</button>
             <button class="planner-btn" onclick="loadMealTemplates()">📋 Шаблоны</button>
-            <div id="templatesList" class="templates-list" style="display: none;"></div>
         </div>
     </div>
 
@@ -4699,7 +4637,7 @@
                         ],
                         "ужин": [
                             {"название": "рыба белая", "количество": 100, "категория": "белки"},
-                            {"название": "шпинат", "количество": 100, "категория": "клетчатка"},
+                            {"название": "салат латук", "количество": 100, "категория": "клетчатка"},
                             {"название": "оливковое масло", "количество": 5, "категория": "ненасыщенные_жиры"}
                         ]
                     }
@@ -4759,7 +4697,7 @@
                             {"название": "оливковое масло", "количество": 15, "категория": "ненасыщенные_жиры"}
                         ],
                         "полдник": [
-                            {"название": "творог", "количество": 30, "категория": "белки"},
+                            {"название": "протеин сывороточный", "количество": 30, "категория": "белки"},
                             {"название": "банан", "количество": 100, "категория": "простые_углеводы"}
                         ],
                         "ужин": [
@@ -5487,52 +5425,8 @@
         }
 
         function loadMealTemplates() {
-            const templatesList = document.getElementById("templatesList");
-            if (templatesList) {
-                templatesList.style.display = templatesList.style.display === "none" ? "block" : "none";
-            }
-            if (!templatesList) return;
-
-            templatesList.innerHTML = "";
-            
-            // Показываем все шаблоны для всех целей
-            for (const [goal, goalTemplates] of Object.entries(MEAL_TEMPLATES)) {
-                for (const [key, template] of Object.entries(goalTemplates)) {
-                    const templateDiv = document.createElement("div");
-                    templateDiv.className = "template-item";
-                    
-                    const templateInfo = document.createElement("div");
-                    templateInfo.className = "template-info";
-                    
-                    const title = document.createElement("h4");
-                    title.textContent = template.название;
-                    
-                    const goalSpan = document.createElement("span");
-                    goalSpan.className = "template-goal";
-                    goalSpan.textContent = goal;
-                    
-                    const desc = document.createElement("p");
-                    desc.textContent = template.описание;
-                    
-                    const calories = document.createElement("span");
-                    calories.className = "template-calories";
-                    calories.textContent = template.калории + " ккал";
-                    
-                    const button = document.createElement("button");
-                    button.className = "apply-template-btn";
-                    button.textContent = "Применить";
-                    button.onclick = function() { applyTemplate(goal, key); };
-                    
-                    templateInfo.appendChild(title);
-                    templateInfo.appendChild(goalSpan);
-                    templateInfo.appendChild(desc);
-                    templateInfo.appendChild(calories);
-                    
-                    templateDiv.appendChild(templateInfo);
-                    templateDiv.appendChild(button);
-                    templatesList.appendChild(templateDiv);
-                }
-            }
+            // Пока что простое сообщение, в будущем можно добавить готовые шаблоны
+            alert('Функция шаблонов будет добавлена в следующем обновлении!');
         }
         
         // Инициализация
