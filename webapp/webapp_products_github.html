@@ -5406,14 +5406,52 @@
         }
 
         function loadMealTemplates() {
-            alert("Доступные шаблоны:\n\n" +
-                  "Похудение:\n- 1200 ккал\n- 1500 ккал\n\n" +
-                  "Набор массы:\n- 2500 ккал\n\n" +
-                  "Поддержание:\n- 2000 ккал\n\n" +
-                  "Для применения используйте консоль браузера (F12):\n" +
-                  "applyTemplate(\"похудение\", \"1200_калорий\")\n" +
-                  "applyTemplate(\"набор_массы\", \"2500_калорий\")\n" +
-                  "applyTemplate(\"поддержание\", \"2000_калорий\")");
+            const templatesList = document.getElementById("templatesList");
+            if (templatesList) {
+                templatesList.style.display = templatesList.style.display === "none" ? "block" : "none";
+            }
+            if (!templatesList) return;
+
+            templatesList.innerHTML = "";
+            
+            // Показываем все шаблоны для всех целей
+            for (const [goal, goalTemplates] of Object.entries(MEAL_TEMPLATES)) {
+                for (const [key, template] of Object.entries(goalTemplates)) {
+                    const templateDiv = document.createElement("div");
+                    templateDiv.className = "template-item";
+                    
+                    const templateInfo = document.createElement("div");
+                    templateInfo.className = "template-info";
+                    
+                    const title = document.createElement("h4");
+                    title.textContent = template.название;
+                    
+                    const goalSpan = document.createElement("span");
+                    goalSpan.className = "template-goal";
+                    goalSpan.textContent = goal;
+                    
+                    const desc = document.createElement("p");
+                    desc.textContent = template.описание;
+                    
+                    const calories = document.createElement("span");
+                    calories.className = "template-calories";
+                    calories.textContent = template.калории + " ккал";
+                    
+                    const button = document.createElement("button");
+                    button.className = "apply-template-btn";
+                    button.textContent = "Применить";
+                    button.onclick = function() { applyTemplate(goal, key); };
+                    
+                    templateInfo.appendChild(title);
+                    templateInfo.appendChild(goalSpan);
+                    templateInfo.appendChild(desc);
+                    templateInfo.appendChild(calories);
+                    
+                    templateDiv.appendChild(templateInfo);
+                    templateDiv.appendChild(button);
+                    templatesList.appendChild(templateDiv);
+                }
+            }
         }
         
         // Инициализация
