@@ -5250,10 +5250,6 @@
                             {"название": "гречка", "количество": 40},
                             {"название": "брокколи", "количество": 150}
                         ],
-                        "snacks": [
-                            {"название": "йогурт греческий", "количество": 100},
-                            {"название": "орехи грецкие", "количество": 15}
-                        ],
                         "dinner": [
                             {"название": "рыба белая", "количество": 100},
                             {"название": "шпинат", "количество": 100},
@@ -5279,10 +5275,6 @@
                             {"название": "куриная грудка", "количество": 150},
                             {"название": "гречка", "количество": 50},
                             {"название": "брокколи", "количество": 180}
-                        ],
-                        "snacks": [
-                            {"название": "йогурт греческий", "количество": 120},
-                            {"название": "орехи грецкие", "количество": 20}
                         ],
                         "dinner": [
                             {"название": "рыба белая", "количество": 120},
@@ -5314,10 +5306,6 @@
                             {"название": "брокколи", "количество": 200},
                             {"название": "оливковое масло", "количество": 10}
                         ],
-                        "snacks": [
-                            {"название": "йогурт греческий", "количество": 200},
-                            {"название": "миндаль", "количество": 30}
-                        ],
                         "dinner": [
                             {"название": "лосось", "количество": 150},
                             {"название": "картофель", "количество": 200},
@@ -5347,10 +5335,6 @@
                             {"название": "брокколи", "количество": 200},
                             {"название": "оливковое масло", "количество": 8}
                         ],
-                        "snacks": [
-                            {"название": "творог 5%", "количество": 100},
-                            {"название": "орехи грецкие", "количество": 20}
-                        ],
                         "dinner": [
                             {"название": "рыба белая", "количество": 120},
                             {"название": "шпинат", "количество": 150},
@@ -5363,7 +5347,6 @@
 
         
         function findProductInDatabase(productName) {
-            // Ищем продукт во всех категориях и целях
             for (const [category, goals] of Object.entries(productsDatabase)) {
                 for (const [goal, products] of Object.entries(goals)) {
                     for (const [name, info] of Object.entries(products)) {
@@ -5377,316 +5360,7 @@
         }
 
         
-        function updateMealPlanDisplay() {
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-            const mealTypes = ["breakfast", "snacks", "lunch", "snacks", "dinner", "snacks"];
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-            mealTypes.forEach(mealType => {
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                const container = document.getElementById(mealType + "-products");
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                if (!container) return;
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                container.innerHTML = "";
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                if (products.length === 0) {
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    container.innerHTML = `<p class="empty-meal">Продукты не добавлены</p>`;
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    return;
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                }
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                products.forEach((product, index) => {
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    const productDiv = document.createElement("div");
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    productDiv.className = "product-item";
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    productDiv.innerHTML = `
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                        <div class="product-info">
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                            <span class="product-name">${product.name}</span>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                            <span class="product-quantity">${product.quantity}г</span>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                        </div>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                        <div class="product-nutrition">
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                            <span class="calories">${product.calories} ккал</span>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                            <span class="proteins">Б: ${product.proteins}г</span>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                            <span class="fats">Ж: ${product.fats}г</span>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                            <span class="carbs">У: ${product.carbs}г</span>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                        </div>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                        <button class="remove-product" onclick="removeProductFromMeal(\"" + mealType + "\", " + index + ")">×</button>
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    `;
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                    container.appendChild(productDiv);
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-                });
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-            });
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-        }
-        function removeProductFromMeal(mealType, index) {
-            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
-            products.splice(index, 1);
-            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
-            updateMealPlanDisplay();
-        }
-
-        
-
-        
         function addProductToMealFromTemplate(productName, quantity, mealType) {
-            // Получаем информацию о продукте из базы данных
             const productData = findProductInDatabase(productName);
             if (!productData) {
                 console.error("Продукт не найден:", productName);
@@ -5698,7 +5372,6 @@
                 return false;
             }
 
-            // Создаем объект продукта для планировщика
             const product = {
                 name: productName,
                 quantity: quantity,
@@ -5710,14 +5383,44 @@
                 description: productInfo.описание
             };
 
-            // Добавляем в localStorage
             const existingProducts = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
             existingProducts.push(product);
             localStorage.setItem("meal_plan_" + mealType, JSON.stringify(existingProducts));
             
-            // Обновляем отображение
             updateMealPlanDisplay();
             return true;
+        }
+
+        
+        function updateMealPlanDisplay() {
+            const mealTypes = ["breakfast", "lunch", "dinner", "snacks"];
+            mealTypes.forEach(mealType => {
+                const container = document.getElementById(mealType + "Products");
+                if (!container) return;
+
+                const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
+                container.innerHTML = "";
+
+                if (products.length === 0) {
+                    container.innerHTML = "<p class=\"empty-meal\">Продукты не добавлены</p>";
+                    return;
+                }
+
+                products.forEach((product, index) => {
+                    const productDiv = document.createElement("div");
+                    productDiv.className = "product-item";
+                    productDiv.innerHTML = "<div class=\"product-info\"><span class=\"product-name\">" + product.name + "</span><span class=\"product-quantity\">" + product.quantity + "г</span></div><div class=\"product-nutrition\"><span class=\"calories\">" + product.calories + " ккал</span><span class=\"proteins\">Б: " + product.proteins + "г</span><span class=\"fats\">Ж: " + product.fats + "г</span><span class=\"carbs\">У: " + product.carbs + "г</span></div><button class=\"remove-product\" onclick=\"removeProductFromMeal(\"" + mealType + "\", " + index + ")\">×</button>";
+                    container.appendChild(productDiv);
+                });
+            });
+        }
+
+        
+        function removeProductFromMeal(mealType, index) {
+            const products = JSON.parse(localStorage.getItem("meal_plan_" + mealType) || "[]");
+            products.splice(index, 1);
+            localStorage.setItem("meal_plan_" + mealType, JSON.stringify(products));
+            updateMealPlanDisplay();
         }
 
         
@@ -5728,10 +5431,8 @@
                 return;
             }
 
-            // Очищаем текущий план
             clearMealPlan();
 
-            // Добавляем продукты из шаблона
             for (const [mealType, products] of Object.entries(template.продукты)) {
                 for (const product of products) {
                     addProductToMealFromTemplate(product.название, product.количество, mealType);
@@ -5740,9 +5441,6 @@
 
             alert("Шаблон применен успешно!");
         }
-
-        
-        
 
         
         function loadMealTemplates() {
@@ -5754,7 +5452,6 @@
 
             templatesList.innerHTML = "";
             
-            // Показываем все шаблоны для всех целей
             for (const [goal, goalTemplates] of Object.entries(MEAL_TEMPLATES)) {
                 for (const [key, template] of Object.entries(goalTemplates)) {
                     const templateDiv = document.createElement("div");
@@ -5809,7 +5506,10 @@
             }
         }
 
-        
+        function loadMealTemplates() {
+            // Пока что простое сообщение, в будущем можно добавить готовые шаблоны
+            alert('Функция шаблонов будет добавлена в следующем обновлении!');
+        }
         
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
