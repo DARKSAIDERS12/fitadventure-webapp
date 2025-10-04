@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ Рецепты FitAdventure</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #000; line-height: 1.6; padding: 10px; }
+        .header { text-align: center; margin-bottom: 20px; padding: 15px; background: #e9ecef; border-radius: 12px; }
+        .recipe-card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .recipe-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #000; }
+        .recipe-meta { display: flex; gap: 15px; margin-bottom: 10px; font-size: 12px; color: #666; flex-wrap: wrap; }
+        .recipe-nutrition { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .nutrition-item { text-align: center; padding: 8px; background: #f8f9fa; border-radius: 8px; }
+        .nutrition-value { font-weight: bold; font-size: 16px; color: #000; }
+        .nutrition-label { font-size: 10px; color: #666; text-transform: uppercase; }
+        .ingredients-title { font-weight: bold; margin-bottom: 8px; color: #000; }
+        .ingredients-list { font-size: 14px; color: #666; }
+        .instructions-title { font-weight: bold; margin-bottom: 8px; color: #000; }
+        .instructions-list { font-size: 14px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🍽️ Рецепты FitAdventure</h1>
+        <p>25 рецептов с КБЖУ и пошаговыми инструкциями</p>
+    </div>
+    <div id="recipes-container"></div>
+    <script>
+        const recipes = [
+            { id: 1, title: "Овсянка с бананом", time: "10 мин", difficulty: "Легко", servings: 1, calories: 320, proteins: 12, fats: 8, carbs: 52, ingredients: ["Овсяные хлопья - 50г", "Банан - 1 шт", "Молоко - 200мл", "Мед - 1 ч.л.", "Орехи - 10г"], instructions: ["Доведите молоко до кипения", "Добавьте овсяные хлопья", "Варите 3-5 минут", "Разомните банан", "Добавьте мед и орехи"] },
+            { id: 2, title: "Куриная грудка с овощами", time: "25 мин", difficulty: "Средне", servings: 2, calories: 280, proteins: 35, fats: 8, carbs: 15, ingredients: ["Куриная грудка - 200г", "Брокколи - 100г", "Морковь - 1 шт", "Лук - 1 шт", "Чеснок - 2 зубчика"], instructions: ["Нарежьте курицу кубиками", "Обжарьте 5 минут", "Добавьте овощи", "Тушите 15 минут", "Приправьте солью и перцем"] },
+            { id: 3, title: "Греческий салат", time: "15 мин", difficulty: "Легко", servings: 2, calories: 180, proteins: 8, fats: 12, carbs: 12, ingredients: ["Помидоры - 2 шт", "Огурцы - 1 шт", "Фета - 100г", "Оливки - 50г", "Оливковое масло - 2 ст.л."], instructions: ["Нарежьте овощи кубиками", "Добавьте фету и оливки", "Смешайте масло с лимоном", "Заправьте салат", "Посыпьте орегано"] },
+            { id: 4, title: "Тост с авокадо", time: "5 мин", difficulty: "Легко", servings: 1, calories: 250, proteins: 8, fats: 18, carbs: 20, ingredients: ["Хлеб цельнозерновой - 2 ломтика", "Авокадо - 1 шт", "Лимонный сок - 1 ч.л.", "Соль - по вкусу"], instructions: ["Поджарьте хлеб", "Разомните авокадо", "Добавьте лимон и соль", "Намажьте на тосты", "Посыпьте кунжутом"] },
+            { id: 5, title: "Лосось на пару с рисом", time: "30 мин", difficulty: "Средне", servings: 2, calories: 420, proteins: 28, fats: 12, carbs: 45, ingredients: ["Филе лосося - 200г", "Рис басмати - 100г", "Брокколи - 150г", "Морковь - 1 шт"], instructions: ["Отварите рис", "Приготовьте лосось на пару", "Приготовьте овощи на пару", "Смешайте соевый соус с имбирем", "Подавайте с соусом"] }
+        ];
+
+        function displayRecipes() {
+            const container = document.getElementById('recipes-container');
+            container.innerHTML = recipes.map(recipe => `
+                <div class="recipe-card">
+                    <div class="recipe-title">${recipe.title}</div>
+                    <div class="recipe-meta">
+                        <span>⏱️ ${recipe.time}</span>
+                        <span>👥 ${recipe.servings} порции</span>
+                        <span>⭐ ${recipe.difficulty}</span>
+                    </div>
+                    <div class="recipe-nutrition">
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">${recipe.calories}</div>
+                            <div class="nutrition-label">Ккал</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">${recipe.proteins}г</div>
+                            <div class="nutrition-label">Белки</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">${recipe.fats}г</div>
+                            <div class="nutrition-label">Жиры</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">${recipe.carbs}г</div>
+                            <div class="nutrition-label">Углеводы</div>
+                        </div>
+                    </div>
+                    <div class="ingredients">
+                        <div class="ingredients-title">🥘 Ингредиенты:</div>
+                        <div class="ingredients-list">${recipe.ingredients.join(', ')}</div>
+                    </div>
+                    <div class="instructions">
+                        <div class="instructions-title">👨‍🍳 Приготовление:</div>
+                        <div class="instructions-list">${recipe.instructions.map((step, index) => `${index + 1}. ${step}`).join('<br>')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', displayRecipes);
+    </script>
+</body>
+</html>
