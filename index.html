@@ -3,99 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitAdventure Mini App</title>
+    <title>🍽️ Рецепты FitAdventure</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 500px;
-            margin: 20px;
-        }
-        h1 {
+            padding: 20px;
             color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            min-height: 100vh;
         }
-        p {
-            color: #666;
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
             margin-bottom: 30px;
-            font-size: 1.1em;
-            line-height: 1.6;
         }
-        .btn {
-            display: inline-block;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
         }
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-        .features {
-            margin-top: 30px;
-            text-align: left;
-        }
-        .feature {
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
+
+        .recipe-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
             border-left: 4px solid #667eea;
+        }
+
+        .recipe-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .recipe-category {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .recipe-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .nutrition-item {
+            text-align: center;
+        }
+
+        .nutrition-value {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .nutrition-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .ingredients {
+            margin-bottom: 15px;
+        }
+
+        .ingredients-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .ingredients-list {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .instructions-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1976d2;
+        }
+
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions-list li {
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .instructions-list li::before {
+            content: "👨‍🍳";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .recipe-stats {
+                flex-direction: column;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🍎 FitAdventure Mini App</h1>
-        <p>База продуктов для здорового питания с калорийностью и БЖУ</p>
-        
-        <a href="webapp_products.html" class="btn">🚀 Открыть приложение</a>
-        
-        <div class="features">
-            <div class="feature">
-                <strong>🌾 Сложные углеводы:</strong> овсянка, гречка, киноа, булгур
+        <div class="header">
+            <h1>🍽️ Рецепты FitAdventure</h1>
+            <p>Здоровые рецепты с точным расчетом КБЖУ</p>
+        </div>
+
+        <!-- Рецепт 1: Овсянка с бананом -->
+        <div class="recipe-card">
+            <h2 class="recipe-title">🌅 Овсянка с бананом</h2>
+            <span class="recipe-category">Завтрак</span>
+            
+            <div class="recipe-stats">
+                <div class="stat">⏱️ 10 минут</div>
+                <div class="stat">👥 1 порция</div>
+                <div class="stat">📊 Легко</div>
             </div>
-            <div class="feature">
-                <strong>🥩 Белки:</strong> куриная грудка, рыба, яйца, творог
+
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <div class="nutrition-value">441</div>
+                    <div class="nutrition-label">калорий</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">14.7г</div>
+                    <div class="nutrition-label">белков</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">8.6г</div>
+                    <div class="nutrition-label">жиров</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">74.1г</div>
+                    <div class="nutrition-label">углеводов</div>
+                </div>
             </div>
-            <div class="feature">
-                <strong>🫒 Ненасыщенные жиры:</strong> орехи, авокадо, оливковое масло
+
+            <div class="ingredients">
+                <div class="ingredients-title">🥘 Ингредиенты:</div>
+                <div class="ingredients-list">
+                    • Овсяные хлопья - 50г (185 ккал)<br>
+                    • Бананы - 1 шт (105 ккал)<br>
+                    • Молоко 2.5% - 200мл (130 ккал)<br>
+                    • Мед - 1 ч.л. (21 ккал)
+                </div>
             </div>
-            <div class="feature">
-                <strong>🌿 Клетчатка:</strong> овощи, бобовые, фрукты
+
+            <div class="instructions">
+                <div class="instructions-title">👨‍🍳 Способ приготовления:</div>
+                <ul class="instructions-list">
+                    <li>Налейте молоко в кастрюлю и доведите до кипения</li>
+                    <li>Всыпьте овсяные хлопья и варите 2-3 минуты на среднем огне</li>
+                    <li>Снимите с огня, добавьте нарезанный кружочками банан</li>
+                    <li>Перемешайте и дайте настояться 2-3 минуты</li>
+                    <li>Добавьте мед по вкусу и подавайте теплым</li>
+                </ul>
             </div>
         </div>
-        
-        <p style="margin-top: 30px; font-size: 0.9em; color: #999;">
-            Откройте в Telegram боте для полного функционала
-        </p>
+
+        <!-- Рецепт 2: Куриная грудка с овощами -->
+        <div class="recipe-card">
+            <h2 class="recipe-title">🍽️ Куриная грудка с овощами</h2>
+            <span class="recipe-category">Обед</span>
+            
+            <div class="recipe-stats">
+                <div class="stat">⏱️ 25 минут</div>
+                <div class="stat">👥 2 порции</div>
+                <div class="stat">📊 Средне</div>
+            </div>
+
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <div class="nutrition-value">739</div>
+                    <div class="nutrition-label">калорий</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">99.5г</div>
+                    <div class="nutrition-label">белков</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">26.5г</div>
+                    <div class="nutrition-label">жиров</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">17.4г</div>
+                    <div class="nutrition-label">углеводов</div>
+                </div>
+            </div>
+
+            <div class="ingredients">
+                <div class="ingredients-title">🥘 Ингредиенты:</div>
+                <div class="ingredients-list">
+                    • Куриная грудка - 300г (495 ккал)<br>
+                    • Брокколи - 200г (68 ккал)<br>
+                    • Морковь - 100г (41 ккал)<br>
+                    • Оливковое масло - 1 ст.л. (135 ккал)
+                </div>
+            </div>
+
+            <div class="instructions">
+                <div class="instructions-title">👨‍🍳 Способ приготовления:</div>
+                <ul class="instructions-list">
+                    <li>Нарежьте куриную грудку кубиками 2×2 см</li>
+                    <li>Разогрейте сковороду с оливковым маслом</li>
+                    <li>Обжарьте курицу на среднем огне 5-7 минут до золотистого цвета</li>
+                    <li>Добавьте нарезанную морковь, обжаривайте 3 минуты</li>
+                    <li>Добавьте брокколи, тушите под крышкой 10-12 минут</li>
+                    <li>Приправьте солью и перцем, перемешайте</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Рецепт 3: Греческий салат -->
+        <div class="recipe-card">
+            <h2 class="recipe-title">🌙 Греческий салат</h2>
+            <span class="recipe-category">Ужин</span>
+            
+            <div class="recipe-stats">
+                <div class="stat">⏱️ 15 минут</div>
+                <div class="stat">👥 2 порции</div>
+                <div class="stat">📊 Легко</div>
+            </div>
+
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <div class="nutrition-value">667</div>
+                    <div class="nutrition-label">калорий</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">17.9г</div>
+                    <div class="nutrition-label">белков</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">59.4г</div>
+                    <div class="nutrition-label">жиров</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="nutrition-value">20.3г</div>
+                    <div class="nutrition-label">углеводов</div>
+                </div>
+            </div>
+
+            <div class="ingredients">
+                <div class="ingredients-title">🥘 Ингредиенты:</div>
+                <div class="ingredients-list">
+                    • Помидоры - 200г (36 ккал)<br>
+                    • Огурцы - 150г (24 ккал)<br>
+                    • Сыр фета - 100г (264 ккал)<br>
+                    • Оливки - 50г (69 ккал)<br>
+                    • Оливковое масло - 2 ст.л. (270 ккал)
+                </div>
+            </div>
+
+            <div class="instructions">
+                <div class="instructions-title">👨‍🍳 Способ приготовления:</div>
+                <ul class="instructions-list">
+                    <li>Нарежьте помидоры и огурцы крупными кубиками</li>
+                    <li>Добавьте сыр фета, нарезанный кубиками</li>
+                    <li>Добавьте оливки</li>
+                    <li>Приготовьте заправку: смешайте оливковое масло с лимонным соком</li>
+                    <li>Залейте салат заправкой и аккуратно перемешайте</li>
+                    <li>Подавайте сразу или охладите в холодильнике 30 минут</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; color: #666;">
+            <p>🍽️ <strong>FitAdventure Bot</strong> - Ваш персональный помощник по питанию</p>
+            <p>📱 Вернитесь в Telegram для использования других функций</p>
+        </div>
     </div>
-    
+
     <script>
-        // Автоматический редирект через 3 секунды
-        setTimeout(function() {
-            window.location.href = 'webapp_products.html';
-        }, 3000);
+        // Инициализация Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+            
+            // Применяем тему Telegram
+            const themeParams = Telegram.WebApp.themeParams;
+            if (themeParams) {
+                document.documentElement.style.setProperty('--background-color', themeParams.bg_color || '#f0f2f5');
+                document.documentElement.style.setProperty('--text-color', themeParams.text_color || '#333');
+                document.documentElement.style.setProperty('--card-background', themeParams.secondary_bg_color || '#ffffff');
+                document.documentElement.style.setProperty('--header-background', themeParams.button_color || '#4CAF50');
+                document.documentElement.style.setProperty('--header-text', themeParams.button_text_color || '#ffffff');
+                document.documentElement.style.setProperty('--accent-color', themeParams.link_color || '#4CAF50');
+            }
+        }
     </script>
 </body>
-</html> 
+</html>
